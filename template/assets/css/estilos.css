@@ -1,0 +1,176 @@
+.menu-section {
+    background: #191c24;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.91);
+    height: auto;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: #000;
+}
+
+.menu-section-cobrar {
+    background: #191c24;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.91);
+    height: 400px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+}
+
+.control-section {
+    background: #191c24;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.91);
+    margin-top: auto;
+    height: 200px;
+}
+
+.btn-product {
+    width: 100%;
+    margin: 5px 0;
+    height: 50px;
+    background-color: #0090e7;
+    border: none;
+}
+
+
+
+.btn-product:hover {
+    background-color: #0078c1;
+}
+
+.btn-product:active {
+    transform: scale(0.95);
+    transition: 0.1s;
+}
+
+
+h4 {
+    margin-bottom: 15px;
+    color: #ffffff;
+    border-bottom: 1px solid #2c2e33;
+    padding-bottom: 10px;
+}
+
+ul {
+    color: #191c24;
+}
+
+.scroll-container {
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+}
+
+
+.scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: #0090e7;
+    border-radius: 10px;
+}
+
+
+.form-control {
+    background-color: #2a2d3a;
+    border: 1px solid #2c2e33;
+    color: #ffffff;
+}
+
+.form-control:focus {
+    background-color: #2a2d3a;
+    border-color: #0090e7;
+    color: #ffffff;
+}
+
+.product-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: -6px;
+}
+
+.quantity-input {
+    width: 80px;
+    margin-top: 10px;
+}
+
+/* Estilos para la lista de productos seleccionados en la sección inferior */
+.productos-list {
+    max-height: 190px;
+    /* Limita la altura */
+    overflow-y: auto;
+    /* Habilita el scroll vertical */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    /* Borde sutil */
+    padding: 12px;
+    border-radius: 10px;
+    /* Bordes más redondeados */
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    /* Efecto de fondo moderno */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra sutil */
+    transition: all 0.3s ease-in-out;
+    /* Animación suave */
+}
+
+/* Efecto hover para modernidad */
+.productos-list:hover {
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Scroll más minimalista */
+.productos-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.productos-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6c757d, #495057);
+    /* Scroll con efecto degradado */
+    border-radius: 5px;
+}
+
+/* Espaciado y diseño de los elementos de la lista */
+.productos-list .list-group-item {
+    border: none;
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+/* Efecto hover con color suave */
+.productos-list .list-group-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: rgba(173, 216, 230, 0.3);
+    /* Azul claro semi-transparente */
+}
+
+/* Duración de la animación de 0.5 segundos */
+#cambio {
+    font-size: 30px;
+    font-weight: bold;
+    color: #f00;
+    /* Color rojo */
+    transition: all 0.5s ease-in-out;
+}
+
+
+
+#moneda {
+    font-size: 30px;
+    font-weight: bold;
+    color: #f00;
+    /* Color rojo */
+    transition: all 0.5s ease-in-out;
+}
