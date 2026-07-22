@@ -8,15 +8,13 @@ class LoginModel extends Mysql
     {
         parent::__construct();
     }
-    public function getUsuario(string $user, string $password)
+    public function getUsuario(string $user)
     {
         $this->strUser = $user;
-        $this->strPassword = $password;
-        $sql = "SELECT id, tipo FROM usuario WHERE cedula = '$this->strUser'
-        AND password = '$this->strPassword'";
-        $data = $this->select($sql);
+        $sql = "SELECT id, tipo, password, estado FROM usuario WHERE cedula = ?";
+        $data = $this->select1($sql, [$this->strUser]);
 
-        return $data;
+        return $data[0] ?? null;
     }
     public function sessionLogin(int $idusuario)
     {

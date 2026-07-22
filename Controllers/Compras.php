@@ -17,26 +17,17 @@ class Compras extends Controllers
 
 	public function compras()
 	{
-		//if(!empty($_SESSION['userData']['tipo'] == 1)){
+		$this->esAdmin();
 		$data['title'] = "Registrar Compra";
 		$data['page_functions_js'] = "functions_compras.js";
 		$this->views->getView($this, "compras", $data);
-		//}else{
-		//	header('location: ' . base_url());
-	//	}
-
 	}
 	public function verCompras()
 	{
-		if(!empty($_SESSION['userData']['tipo'] == 1)){
+		$this->esAdmin();
 		$data['title'] = "Lista de Compra";
 		$data['page_functions_js'] = "functions_verCompras.js";
 		$this->views->getView($this, "verCompras", $data);
-		}else{
-			header('location: ' . base_url());
-		}
-
-
 	}
 	public function getCompras()
 	{
@@ -55,7 +46,7 @@ class Compras extends Controllers
 		// Variable para rastrear el estado de la solicitud
 		$status = false;
 		$msg = '';
-	
+
 		// Realiza alguna acción con los datos de compra
 		foreach ($compras as $compra) {
 			// Accede a los valores individuales de cada compra
@@ -63,10 +54,10 @@ class Compras extends Controllers
 			$cantidadCompra = $compra['cantidadCompra'];
 			$fechaCompra = $compra['fechaCompra'];
 			$totalCompra = $compra['totalCompra'];
-	
+
 			// Realiza la acción deseada, por ejemplo, insertar en la base de datos
 			$result = $this->model->insertCompra($nombreProductoId, $cantidadCompra, $fechaCompra, $totalCompra);
-	
+
 			// Verifica el resultado de la inserción
 			if ($result >= 0) {
 				$status = true;
@@ -77,7 +68,7 @@ class Compras extends Controllers
 				break; // Si ocurre un error, detén el bucle
 			}
 		}
-	
+
 		// Crea una respuesta JSON para enviar de vuelta al cliente
 		$response = ['status' => $status, 'msg' => $msg];
 		echo json_encode($response, JSON_UNESCAPED_UNICODE);

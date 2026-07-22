@@ -27,13 +27,13 @@ class Login extends Controllers
             } else {
                 $strUser = strtolower($_POST['user']);
                 $strPassword = $_POST['password'];
-                $requestUser = $this->model->getUsuario($strUser, $strPassword);
-                if (empty($requestUser)) {
+                $requestUser = $this->model->getUsuario($strUser);
+                if (empty($requestUser) || !password_verify($strPassword, $requestUser['password'])) {
                     $arrResponse = array('status' => false, 'msg' => 'El usuario o la contraseña es incorrecto.');
                     //incorrecto
                 } else {
                     $arrData = $requestUser;
-                    if ($arrData['id'] != "") {
+                    if ($arrData['estado'] == 1) {
                         $_SESSION['idUsuario'] = $arrData['id'];
                         $_SESSION['login'] = true;
                         $_SESSION['timeout'] = true;
