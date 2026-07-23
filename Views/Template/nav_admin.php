@@ -42,6 +42,15 @@
   </a>
 </li>
 
+<li class="nav-item menu-items">
+  <a class="nav-link" href="<?= base_url(); ?>/recetas">
+    <span class="menu-icon">
+      <i class="mdi mdi-book-open-variant"></i>
+    </span>
+    <span class="menu-title">Recetas</span>
+  </a>
+</li>
+
 
 <style>
   .nav-link.active {

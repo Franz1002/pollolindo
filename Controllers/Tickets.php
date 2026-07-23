@@ -15,6 +15,7 @@ class Tickets extends Controllers
 
 	public function tickets()
 	{
+		$this->esAdmin();
 		//	if (!empty($_SESSION['userData']['tipo'] == 1)) {
 		$data['title'] = "Tickets";
 		$data['page_functions_js'] = "functions_tickets.js";
@@ -27,7 +28,7 @@ class Tickets extends Controllers
 	public function getTickets()
 	{
 
-
+		$this->esAdmin();
 		$arrData = $this->model->selectTickets();
 		for ($i = 0; $i < count($arrData); $i++) {
 

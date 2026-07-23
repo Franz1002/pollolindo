@@ -133,7 +133,7 @@ JOIN categoria c ON m.categoria_id = c.id_categoria";
     {
         $sql = "DELETE FROM menu WHERE id_menu = ?";
         $arrData = array($idMenu);
-        return $this->delete($sql, $arrData);
+        return $this->update($sql, $arrData); // update() sí acepta parámetros, delete() no
     }
 
     public function getSelectProductoPrecio($id_producto)

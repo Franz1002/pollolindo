@@ -55,7 +55,7 @@
                                 <img id="imgPreview" src="" alt="Vista previa de imagen" style="max-width: 100%; height: auto; display: none; border-radius: 10px;">
                             </div>
 
-                     
+
 
                         </div>
 
@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="text-center mt-3">
-                        <button id="btnActionFormMenu" onclick="registrarMenu(event);" class="btn btn-primary" type="button">
+                        <button id="btnActionFormMenu" onclick="guardarMenu(event);" class="btn btn-primary" type="button">
                             <i class="fa fa-check-circle"></i><span id="btnText"> Registrar</span>
                         </button>
                     </div>

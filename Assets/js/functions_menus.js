@@ -108,33 +108,42 @@ function registrarMenu(e) {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
-        .then(result => {
-            if (result.status) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Menú registrado!',
-                    text: 'El menú ha sido registrado exitosamente.',
-                }).then(() => {
-                    // Recargar la tabla sin cambiar la página
-                    tableMenus.ajax.reload(null, false);
-                });
-            } else {
+            .then(response => response.json())
+            .then(result => {
+                if (result.status) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Menú registrado!',
+                        text: 'El menú ha sido registrado exitosamente.',
+                    }).then(() => {
+                        // Recargar la tabla sin cambiar la página
+                        tableMenus.ajax.reload(null, false);
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: 'Hubo un error al registrar el menú.',
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: '¡Error!',
-                    text: 'Hubo un error al registrar el menú.',
+                    text: 'Hubo un problema al registrar el menú.',
                 });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: '¡Error!',
-                text: 'Hubo un problema al registrar el menú.',
             });
-        });
+    }
+}
+// Decide si registra o actualiza según si hay un idMenu cargado
+function guardarMenu(e) {
+    const idMenu = document.getElementById('idMenu').value;
+    if (idMenu) {
+        actualizarMenu(e);
+    } else {
+        registrarMenu(e);
     }
 }
 
@@ -195,32 +204,89 @@ function actualizarMenu(e) {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(result => {
-        if (result.status) {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Menú actualizado!',
-                text: 'El menú ha sido actualizado exitosamente.',
-            }).then(() => {
-                // Recargar la tabla sin cambiar la página
-                tableMenus.ajax.reload(null, false);
-            });
-        } else {
+        .then(response => response.json())
+        .then(result => {
+            if (result.status) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Menú actualizado!',
+                    text: 'El menú ha sido actualizado exitosamente.',
+                }).then(() => {
+                    // Recargar la tabla sin cambiar la página
+                    tableMenus.ajax.reload(null, false);
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'Hubo un error al actualizar el menú.',
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
             Swal.fire({
                 icon: 'error',
                 title: '¡Error!',
-                text: 'Hubo un error al actualizar el menú.',
+                text: 'Hubo un problema al actualizar el menú.',
             });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: '¡Error!',
-            text: 'Hubo un problema al actualizar el menú.',
         });
+}
+
+function viewMenu(idMenu) {
+    $.ajax({
+        url: base_url + "/Menus/getMenu/" + idMenu,
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+            if (response.status) {
+                const menu = response.data[0];
+                $('#verNombre').text(menu.nombre_menu);
+                $('#verPrecio').text(menu.precio_menu);
+                $('#verDescripcion').text(menu.detalle_menu);
+                $('#verImagen').attr('src', base_url + "/Assets/images/imgMenu/" + menu.img_menu);
+
+                const modal = new bootstrap.Modal(document.getElementById("modalVerProducto"));
+                modal.show();
+            }
+        },
+        error: function () {
+            console.log("Error al obtener los datos del menú.");
+        }
+    });
+}
+
+function deletMenu(idMenu) {
+    Swal.fire({
+        title: '¿Eliminar este menú?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append('id_menu', idMenu);
+
+            fetch(base_url + '/Menus/deleteMenu', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status) {
+                        Swal.fire('¡Eliminado!', result.msg, 'success')
+                            .then(() => tableMenus.ajax.reload(null, false));
+                    } else {
+                        Swal.fire('Error', result.msg, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Hubo un problema al eliminar.', 'error');
+                });
+        }
     });
 }
 

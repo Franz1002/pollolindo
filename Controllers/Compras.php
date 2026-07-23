@@ -11,8 +11,6 @@ class Compras extends Controllers
 		if (empty($_SESSION['login'])) {
 			header('location: ' . base_url());
 		}
-
-
 	}
 
 	public function compras()
@@ -31,7 +29,7 @@ class Compras extends Controllers
 	}
 	public function getCompras()
 	{
-
+		$this->esAdmin();
 		$arrData = $this->model->selectCompras();
 
 		echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
@@ -40,6 +38,7 @@ class Compras extends Controllers
 	}
 	public function registrarCompra()
 	{
+		$this->esAdmin();
 		// Obtiene el arreglo de compras desde la solicitud POST
 		$compras = json_decode($_POST['compras'], true);
 
@@ -84,4 +83,3 @@ class Compras extends Controllers
 
 
 }
-?>

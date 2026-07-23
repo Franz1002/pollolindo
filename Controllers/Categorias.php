@@ -17,6 +17,7 @@ class Categorias extends Controllers
 
 	public function categorias()
 	{
+		$this->esAdmin();
 		//if (!empty($_SESSION['userData']['tipo'] == 1))
 		// {
 		$data['title'] = "Categorias";
@@ -84,6 +85,7 @@ class Categorias extends Controllers
 
 	public function registrarCategoria()
 	{
+		$this->esAdmin();
 		$strNombre = convertirPalabrasAMayuscula($_POST['nombre']);
 		$strDescripcion = $_POST['descripcion'];
 
@@ -103,6 +105,7 @@ class Categorias extends Controllers
 	}
 	public function editCategoria()
 	{
+		$this->esAdmin();
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$idCategoria = intval($_POST['id_categoria']);
 			$nombre = trim($_POST['nombre']);
@@ -131,6 +134,7 @@ class Categorias extends Controllers
 
 	public function deleteCategoria()
 	{
+		$this->esAdmin();
 		if ($_POST) {
 			$intIdCategoria = intval($_POST['idCategoria']);
 			$requestDel = $this->model->deletCategoria($intIdCategoria);

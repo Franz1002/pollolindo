@@ -16,18 +16,15 @@ class Inventario extends Controllers
 
     public function inventario()
     {
-        //if (!empty($_SESSION['userData']['tipo'] == 1)) {
-
+        $this->esAdmin();
         $data['title'] = "Inventario";
         $data['page_functions_js'] = "functions_inventario.js";
         $this->views->getView($this, "inventario", $data);
-        // } else {
-        //    header('location: ' . base_url());
-        //  }
     }
 
     public function agotados()
     {
+        $this->esAdmin();
         $arrData = $this->model->selectAgotados();
         foreach ($arrData as &$data) {
             $data['precio_producto'] = $data['precio_producto'] . ' Bs.';
@@ -39,6 +36,7 @@ class Inventario extends Controllers
     }
     public function porAgotar()
     {
+        $this->esAdmin();
         $arrData = $this->model->selectPorAgotar();
         foreach ($arrData as &$data) {
             $data['cantidad_producto'] = $data['cantidad_producto'] . ' Unidades';
@@ -52,6 +50,7 @@ class Inventario extends Controllers
 
     public function disponible()
     {
+        $this->esAdmin();
         $arrData = $this->model->selectDisponible();
         foreach ($arrData as &$data) {
             $data['cantidad_producto'] = $data['cantidad_producto'] . ' Unidades';
@@ -64,6 +63,7 @@ class Inventario extends Controllers
     }
     public function masVendidos()
     {
+        $this->esAdmin();
         $arrData = $this->model->selectVendidos();
         foreach ($arrData as &$data) {
             $data['cantidad_producto'] = $data['cantidad_producto'] . ' Unidades';
@@ -74,5 +74,4 @@ class Inventario extends Controllers
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
         die();
     }
-
 }

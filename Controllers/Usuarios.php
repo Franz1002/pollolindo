@@ -5,7 +5,7 @@ class Usuarios extends Controllers
 	public $views;
 	public $model;
 	public function __construct()
-	{
+		{
 
 		parent::__construct();
 		session_start();
@@ -15,7 +15,7 @@ class Usuarios extends Controllers
 	}
 	public function usuarios()
 	{
-		//if (!empty($_SESSION['userData']['tipo'] == 1)) {
+		$this->esAdmin();
 		$data['title'] = "Usuarios";
 		$data['page_functions_js'] = "functions_usuarios.js";
 		$this->views->getView($this, "usuarios", $data);
@@ -26,6 +26,7 @@ class Usuarios extends Controllers
 
 	public function getSelectCargos()
 	{
+		$this->esAdmin();
 		$htmlOptions = "<option value='' disabled selected>Seleccione un cargo</option>";  // Agregar una opción predeterminada.
 		$arrData = $this->model->selectCargos();
 		if (count($arrData) > 0) {
@@ -47,6 +48,7 @@ class Usuarios extends Controllers
 
 	public function getUsuario($id)
 	{
+		$this->esAdmin();
 		//header('Content-Type: application/json; charset=UTF-8');
 		$idUsuario = intval($id);
 		if ($id > 0) {
@@ -63,6 +65,7 @@ class Usuarios extends Controllers
 	}
 	public function getUsuarios()
 	{
+		$this->esAdmin();
 		$arrData = $this->model->selectUsuarios(); // Obtener los usuarios
 
 		// Recorremos los usuarios y modificamos los datos
@@ -99,10 +102,11 @@ class Usuarios extends Controllers
 
 	public function registrarUsuario()
 	{
+		$this->esAdmin();
 		$strNombres = convertirPalabrasAMayuscula($_POST['nombres']);
 		$strApellidos = convertirPalabrasAMayuscula($_POST['apellidos']);
 		$strEmail = $_POST['email'];
-		$strPassword = $_POST['password'];
+		$strPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
 		$strCedula = $_POST['ci'];
 		$intCelular = intval($_POST['celular']);
 		$intTipoUsuario = $_POST['cargo'];
@@ -133,6 +137,7 @@ class Usuarios extends Controllers
 
 	public function deleteUsuario()
 	{
+		$this->esAdmin();
 		if ($_POST) {
 			$intIdUsuario = intval($_POST['idUsuario']);
 			$requestDel = $this->model->deletUsuario($intIdUsuario);

@@ -16,14 +16,10 @@ class Menus extends Controllers
 
 	public function menus()
 	{
-		//if (!empty($_SESSION['userData']['tipo'] == 1)) {
-
+		$this->esAdmin();
 		$data['title'] = "Menu";
 		$data['page_functions_js'] = "functions_menus.js";
 		$this->views->getView($this, "menus", $data);
-		//	} else {
-		//		header('location: ' . base_url());
-		//}
 	}
 
 	public function getMenus()
@@ -88,6 +84,7 @@ class Menus extends Controllers
 
 	public function registrarMenu()
 	{
+		$this->esAdmin();
 		// Obtener los datos del formulario
 		$strNombreMenu = $_POST['nombre_menu'];
 		$floatPrecioMenu = floatval($_POST['precio_menu']);
@@ -127,6 +124,7 @@ class Menus extends Controllers
 
 	public function actualizarMenu()
 	{
+		$this->esAdmin();
 		if ($_POST) {
 			$intIdMenu = intval($_POST['idMenu']);
 			$strNombreMenu = $_POST['nombre_menu'];
@@ -174,6 +172,7 @@ class Menus extends Controllers
 
 	public function deleteMenu()
 	{
+		$this->esAdmin();
 		if ($_POST) {
 			$intIdMenu = intval($_POST['id_menu']);
 			$requestDel = $this->model->deleteMenu($intIdMenu);
