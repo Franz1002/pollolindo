@@ -1,7 +1,7 @@
 function imprimir() {
     // Realiza una solicitud AJAX al backend de PHP
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost/pollo/inicio/imprimir", true); // Asegúrate de que la URL esté correcta
+    xhr.open("GET", base_url + "/inicio/imprimir", true);
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <title>Chicken lindo</title>
+  <title>Chicken Lindo · Panel</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="<?= base_url_template(); ?>/assets/vendors/mdi/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="<?= base_url_template(); ?>/assets/vendors/css/vendor.bundle.base.css">
@@ -34,6 +34,14 @@
   <link rel="stylesheet" href="<?= base_url_template(); ?>/assets/css/estilos.css">
   <link rel="stylesheet" href="<?= base_url_template(); ?>/assets/css/animate.min.css">
   <!-- End layout styles -->
+
+  <!-- Sistema de diseño Chicken Lindo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<?= base_url(); ?>/Assets/css/tokens.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>/Assets/css/layout.css">
+
   <link rel="shortcut icon" href="<?= base_url_template(); ?>/assets/images/favicon.png" />
 </head>
 
@@ -42,8 +50,8 @@
     <!-- partial:<?= base_url_template(); ?>/partials/_sidebar.html -->
     <nav class="sidebar sidebar-offcanvas" id="sidebar">
       <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-        <a class="sidebar-brand brand-logo" href="<?= base_url(); ?>/inicio"><img src="<?= base_url_template(); ?>/assets/images/logo.svg" alt="logo" /></a>
-        <a class="sidebar-brand brand-logo-mini" href="<?= base_url(); ?>/inicio"><img src="<?= base_url_template(); ?>/assets/images/logo_mini.svg" alt="logo" /></a>
+        <a class="sidebar-brand brand-logo marca-sidebar" href="<?= base_url(); ?>/inicio"><span class="punto-brasa"></span>Chicken Lindo</a>
+        <a class="sidebar-brand brand-logo-mini marca-sidebar-mini" href="<?= base_url(); ?>/inicio">CL</a>
       </div>
       <ul class="nav">
         <li class="nav-item profile">

@@ -1,0 +1,137 @@
+/* =========================================================
+   LAYOUT ADMIN — Chicken Lindo
+   Sobrescribe el sidebar y la barra superior de la plantilla
+   AdminKit con los tokens del sistema de diseño. Se carga
+   DESPUÉS de style.css / main.css para poder ganar en cascada.
+   ========================================================= */
+
+body{
+  background:var(--carbon) !important;
+  font-family:var(--font-body);
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  background:var(--carbon-alto) !important;
+  border-right:1px solid var(--carbon-borde);
+}
+
+.sidebar .sidebar-brand-wrapper{
+  background:var(--carbon-alto) !important;
+  border-bottom:1px solid var(--carbon-borde);
+}
+
+/* Wordmark de texto: los logos rasterizados de la plantilla
+   no encajaban en el recorte circular del sidebar, así que
+   la marca se resuelve en tipografía, igual que en login. */
+.marca-sidebar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:1.15rem;
+  color:var(--hueso);
+  text-decoration:none;
+  letter-spacing:-0.01em;
+}
+.marca-sidebar .punto-brasa{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--brasa-viva);
+  box-shadow:0 0 0 3px rgba(229,114,47,0.18);
+  flex-shrink:0;
+}
+.marca-sidebar-mini{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:1.3rem;
+  color:var(--brasa-viva);
+  text-decoration:none;
+}
+
+.sidebar .nav .nav-item .nav-link{
+  color:var(--hueso-tenue) !important;
+}
+.sidebar .nav .nav-item .nav-link .menu-title{
+  color:var(--hueso-tenue);
+  font-family:var(--font-body);
+  font-weight:500;
+}
+.sidebar .nav .nav-item .nav-link i{
+  color:var(--hueso-opaco) !important;
+}
+.sidebar .nav .nav-item .nav-link:hover,
+.sidebar .nav .nav-item .nav-link:hover .menu-title,
+.sidebar .nav .nav-item .nav-link:hover i{
+  color:var(--hueso) !important;
+  background:var(--carbon-mas-alto);
+}
+.sidebar .nav .nav-item .nav-link.active{
+  background:var(--carbon-mas-alto) !important;
+  box-shadow:inset 3px 0 0 0 var(--brasa-viva) !important;
+}
+.sidebar .nav .nav-item .nav-link.active .menu-title,
+.sidebar .nav .nav-item .nav-link.active i{
+  color:var(--hueso) !important;
+}
+.sidebar .nav-category .nav-link{
+  color:var(--hueso-opaco) !important;
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.sidebar .nav-item.profile{
+  background:var(--carbon-mas-alto);
+  border-bottom:1px solid var(--carbon-borde);
+}
+.sidebar .nav-item.profile .profile-name h5{
+  color:var(--hueso) !important;
+  font-family:var(--font-body) !important;
+}
+.sidebar .nav-item.profile .profile-name span{
+  color:var(--hueso-opaco) !important;
+  font-family:var(--font-mono) !important;
+  font-size:0.72rem !important;
+}
+
+/* ---------- Barra superior ---------- */
+.navbar{
+  background:var(--carbon-alto) !important;
+  border-bottom:1px solid var(--carbon-borde);
+}
+.navbar .search .form-control{
+  background:var(--carbon) !important;
+  border:1px solid var(--carbon-borde) !important;
+  color:var(--hueso) !important;
+}
+.navbar .search .form-control::placeholder{ color:var(--hueso-opaco); }
+
+.fecha-navbar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:var(--font-mono);
+  font-size:0.8rem;
+  color:var(--hueso-tenue);
+  padding:0 20px;
+  text-transform:capitalize;
+}
+
+/* ---------- Contenido general ---------- */
+.content-wrapper{
+  background:var(--carbon) !important;
+}
+.card{
+  background:var(--carbon-alto) !important;
+  border:1px solid var(--carbon-borde) !important;
+  color:var(--hueso) !important;
+}
+footer.footer{
+  background:transparent !important;
+  border-top:1px solid var(--carbon-borde);
+  color:var(--hueso-opaco) !important;
+}
