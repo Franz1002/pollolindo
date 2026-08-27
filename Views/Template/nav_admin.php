@@ -41,7 +41,14 @@
     <span class="menu-title">Inventario</span>
   </a>
 </li>
-
+<li class="nav-item menu-items">
+  <a class="nav-link" href="<?= base_url(); ?>/insumos">
+    <span class="menu-icon">
+      <i class="mdi mdi-food-drumstick"></i>
+    </span>
+    <span class="menu-title">Insumos</span>
+  </a>
+</li>
 <li class="nav-item menu-items">
   <a class="nav-link" href="<?= base_url(); ?>/recetas">
     <span class="menu-icon">
@@ -113,12 +120,6 @@
   });
 </script>
 
-
-
-
-
-
-
 <li class="nav-item menu-items">
   <a class="nav-link" href="<?= base_url(); ?>/tickets">
     <span class="menu-icon">
@@ -151,7 +152,8 @@
   <!-- partial:<?= base_url_template(); ?>/partials/_navbar.html -->
   <nav class="navbar p-0 fixed-top d-flex flex-row">
     <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
-      <a class="navbar-brand brand-logo-mini" href="<?= base_url_template(); ?>/inicio"><img src="<?= base_url_template(); ?>/assets/images/logo-mini.svg" alt="logo" /></a>
+      <a class="navbar-brand brand-logo-mini" href="<?= base_url_template(); ?>/inicio"><img
+          src="<?= base_url_template(); ?>/assets/images/logo-mini.svg" alt="logo" /></a>
     </div>
     <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
       <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -160,9 +162,9 @@
       <ul class="navbar-nav w-100">
         <li class="nav-item w-100">
           <?php
-            $dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-            $meses = ['','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-            $fechaHoy = $dias[date('w')] . ' ' . date('d') . ' de ' . $meses[(int)date('n')] . ', ' . date('Y');
+          $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+          $meses = ['', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+          $fechaHoy = $dias[date('w')] . ' ' . date('d') . ' de ' . $meses[(int)date('n')] . ', ' . date('Y');
           ?>
           <span class="fecha-navbar"><i class="mdi mdi-calendar-blank"></i> <?= $fechaHoy; ?></span>
         </li>
@@ -191,7 +193,8 @@
           </div>
         </li>
       </ul>
-      <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+      <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+        data-toggle="offcanvas">
         <span class="mdi mdi-format-line-spacing"></span>
       </button>
     </div>

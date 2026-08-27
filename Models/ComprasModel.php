@@ -1,70 +1,51 @@
 <?php
 class ComprasModel extends Mysql
 {
-
     public function __construct()
     {
         parent::__construct();
     }
-    public function insertCompra(int $nombreProductoId, int $cantidadCompra, string $fechaCompra, float $totalCompra)
+
+    public function insertCompra(int $insumoId, float $cantidadCompra, string $fechaCompra, float $totalCompra, int $usuarioId)
     {
-        // Inicializa la variable de retorno
-        $return = "";
+        // 1. Registra la compra
+        $queryCompra = "INSERT INTO compra (insumo_id, usuario_id, cantidad, costo_total, fecha_compra) VALUES (?, ?, ?, ?, ?)";
+        $requestCompra = $this->insert($queryCompra, [$insumoId, $usuarioId, $cantidadCompra, $totalCompra, $fechaCompra]);
 
-        // Inserta la compra en la tabla 'compra'
-        $queryCompra = "INSERT INTO compra (total_compra, cantidad_compra, fecha_compra, producto_id) VALUES (?, ?, ?, ?)";
-        $arrDataCompra = array($totalCompra, $cantidadCompra, $fechaCompra, $nombreProductoId);
-        $requestCompra = $this->insert($queryCompra, $arrDataCompra);
-
-        // Verifica si la inserción en 'compra' fue exitosa
-        if ($requestCompra > 0) {
-            // Actualizar cantidad y precio en la tabla 'producto'
-            $nuevoPrecio = round($totalCompra / $cantidadCompra, 2);
-            $queryUpdateProducto = "UPDATE producto SET cantidad_producto = cantidad_producto + ?, precio_producto = ? WHERE id_producto = ?";
-            $arrDataUpdateProducto = array($cantidadCompra, $nuevoPrecio, $nombreProductoId);
-            $requestUpdateProducto = $this->update($queryUpdateProducto, $arrDataUpdateProducto);
-
-            // Verifica si la actualización en 'producto' fue exitosa
-            if ($requestUpdateProducto > 0) {
-                $return = "Compra registrada y producto actualizado exitosamente.";
-            } else {
-                $return = "Compra registrada, pero hubo un error al actualizar el producto.";
-            }
-        } else {
-            $return = "Hubo un error al registrar la compra.";
+        if ($requestCompra <= 0) {
+            return false;
         }
 
-        return $return;
+        // 2. Trae el stock y costo promedio actuales del insumo
+        $insumo = $this->select1("SELECT stock_actual, costo_promedio FROM insumo WHERE id_insumo = ?", [$insumoId]);
+        $stockAnterior = $insumo[0]['stock_actual'];
+        $costoAnterior = $insumo[0]['costo_promedio'];
+
+        // 3. Calcula el costo promedio ponderado
+        $costoEstaCompra = $totalCompra / $cantidadCompra;
+        $stockNuevo = $stockAnterior + $cantidadCompra;
+        $costoPromedioNuevo = (($stockAnterior * $costoAnterior) + ($cantidadCompra * $costoEstaCompra)) / $stockNuevo;
+
+        // 4. Actualiza el insumo
+        $queryUpdate = "UPDATE insumo SET stock_actual = ?, costo_promedio = ? WHERE id_insumo = ?";
+        $this->update($queryUpdate, [$stockNuevo, round($costoPromedioNuevo, 4), $insumoId]);
+
+        return true;
     }
+
     public function selectCompras()
     {
-        $sql = "SELECT * from compra INNER JOIN producto
-        on producto_id = id_producto";
-        $request = $this->select_all($sql);
-        return $request;
+        $sql = "SELECT c.id_compra, i.nombre_insumo, i.unidad_medida, c.cantidad, c.costo_total, c.fecha_compra, u.nombre AS nombre_usuario
+                FROM compra c
+                INNER JOIN insumo i ON i.id_insumo = c.insumo_id
+                LEFT JOIN usuario u ON u.id = c.usuario_id
+                ORDER BY c.fecha_compra DESC";
+        return $this->select_all($sql);
     }
-    public function selectVentas()
+
+    public function selectInsumosActivos()
     {
-        $sql = "SELECT
-        v.id_venta,
-        vp.producto_id,
-        p.nombre_producto,
-        p.precio_producto,
-        vp.cantidad AS cantidad_vendida,
-        u.nombre AS nombre_usuario,
-        u.email AS email_usuario,
-        v.fecha_venta,
-        v.total_venta
-    FROM
-        venta v
-    INNER JOIN
-        venta_producto vp ON v.venta_producto_id = vp.id_venta_producto
-    INNER JOIN
-        producto p ON vp.producto_id = p.id_producto
-    INNER JOIN
-        usuario u ON v.usuario_id = u.id;
-    ";
-        $request = $this->select_all($sql);
-        return $request;
+        $sql = "SELECT id_insumo, nombre_insumo, unidad_medida, stock_actual, costo_promedio FROM insumo WHERE estado = 1 ORDER BY nombre_insumo ASC";
+        return $this->select_all($sql);
     }
 }
