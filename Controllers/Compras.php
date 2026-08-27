@@ -31,51 +31,39 @@ class Compras extends Controllers
 	{
 		$this->esAdmin();
 		$arrData = $this->model->selectCompras();
-
 		echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
-
 		die();
 	}
-	public function registrarCompra()
+
+	public function getInsumosActivos()
 	{
 		$this->esAdmin();
-		// Obtiene el arreglo de compras desde la solicitud POST
-		$compras = json_decode($_POST['compras'], true);
-
-		// Variable para rastrear el estado de la solicitud
-		$status = false;
-		$msg = '';
-
-		// Realiza alguna acción con los datos de compra
-		foreach ($compras as $compra) {
-			// Accede a los valores individuales de cada compra
-			$nombreProductoId = $compra['nombreProductoId'];
-			$cantidadCompra = $compra['cantidadCompra'];
-			$fechaCompra = $compra['fechaCompra'];
-			$totalCompra = $compra['totalCompra'];
-
-			// Realiza la acción deseada, por ejemplo, insertar en la base de datos
-			$result = $this->model->insertCompra($nombreProductoId, $cantidadCompra, $fechaCompra, $totalCompra);
-
-			// Verifica el resultado de la inserción
-			if ($result >= 0) {
-				$status = true;
-				$msg = 'Compra(s) registrada(s) exitosamente.';
-			} else {
-				$status = false;
-				$msg = 'Hubo un error al registrar la(s) compra(s).';
-				break; // Si ocurre un error, detén el bucle
-			}
-		}
-
-		// Crea una respuesta JSON para enviar de vuelta al cliente
-		$response = ['status' => $status, 'msg' => $msg];
-		echo json_encode($response, JSON_UNESCAPED_UNICODE);
+		$arrData = $this->model->selectInsumosActivos();
+		echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
 		die();
 	}
-	//dep($compras);die();
+public function registrarCompra()
+{
+    $this->esAdmin();
+    if ($_POST) {
+        $insumoId = intval($_POST['insumo_id']);
+        $cantidad = floatval($_POST['cantidad']);
+        $totalCompra = floatval($_POST['costo_total']);
+        $fecha = $_POST['fecha_compra'];
+        $usuarioId = $_SESSION['idUsuario']['id'];
 
-
+        if ($insumoId > 0 && $cantidad > 0 && $totalCompra > 0) {
+            $ok = $this->model->insertCompra($insumoId, $cantidad, $fecha, $totalCompra, $usuarioId);
+            $arrResponse = $ok
+                ? array('status' => true, 'msg' => 'Compra registrada y stock actualizado correctamente.')
+                : array('status' => false, 'msg' => 'Hubo un error al registrar la compra.');
+        } else {
+            $arrResponse = array('status' => false, 'msg' => 'Todos los campos son obligatorios.');
+        }
+        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+    }
+    die();
+}
 
 
 
