@@ -10,12 +10,16 @@
 
 
 
-  <!-- Bootstrap CSS -->
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <!-- Tipografías del sistema de diseño -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>/Assets/css/tokens.css">
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>/Assets/css/login.css">
   <link rel="icon" href="<?php echo BASE_URL; ?>/Assets/images/favicon.png" type="image/x-icon">
 
-  <title>Iniciar Sesión</title>
+  <title>Iniciar sesión · Chicken Lindo</title>
 </head>
 
 <body>
@@ -26,19 +30,19 @@
 
       <!-- Icon -->
       <div class="fadeIn first">
-        <img src="<?php echo BASE_URL; ?>/Assets/images/logoPollo2.png" id="icon" alt="User Icon" />
-        <h1>INICIAR SESION</h1>
+        <img src="<?php echo BASE_URL; ?>/Assets/images/logoPollo2.png" id="icon" alt="Logo de Chicken Lindo" />
+        <h1>Iniciar sesión</h1>
       </div>
 
       <!-- Login Form -->
       <form id="formLogin" name="formLogin" action="">
         <div class="form-group">
-          <label for="user" class="user">Usuario</label>
-          <input type="text" id="user" name="user" placeholder="Ingrese la cuenta de usuario">
+          <label for="user">Usuario</label>
+          <input type="text" id="user" name="user" placeholder="Tu usuario del sistema" autocomplete="username">
         </div>
         <div class="form-group">
-          <label for="password" class="user">Contraseña</label>
-          <input type="password" id="password" class="fadeIn second" name="password" placeholder="Ingrese su contraseña">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" class="fadeIn second" name="password" placeholder="Tu contraseña" autocomplete="current-password">
         </div>
         <div class="alert alert-danger text-center d-none" id="alerta" role="alert">
 

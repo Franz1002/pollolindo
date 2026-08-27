@@ -1,0 +1,121 @@
+/* =========================================================
+   CHICKEN LINDO — SISTEMA DE DISEÑO
+   Tokens base: paleta, tipografía y componentes reutilizables.
+   Todas las vistas del panel deben partir de este archivo.
+   ========================================================= */
+
+:root{
+  /* Paleta */
+  --carbon: #221D1A;
+  --carbon-alto: #2B241F;
+  --carbon-mas-alto: #332B25;
+  --carbon-borde: #423830;
+  --brasa: #C7511F;
+  --brasa-viva: #E5722F;
+  --brasa-tenue: #7A3616;
+  --hueso: #F1E9DD;
+  --hueso-tenue: #B9AC9B;
+  --hueso-opaco: #8A7E70;
+  --oliva: #6E7C57;
+  --oxido: #A23B2E;
+
+  /* Tipografía */
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --radius: 6px;
+  --radius-lg: 10px;
+}
+
+/* ---------- Botones ---------- */
+.btn-brasa, .btn-primario{
+  font-family:var(--font-body);
+  font-weight:600;
+  font-size:0.92rem;
+  padding:11px 20px;
+  border-radius:var(--radius);
+  border:1px solid transparent;
+  cursor:pointer;
+  background:var(--brasa);
+  color:var(--hueso);
+  transition:transform 0.08s ease, background 0.15s ease;
+}
+.btn-brasa:hover, .btn-primario:hover{ background:var(--brasa-viva); }
+.btn-brasa:active, .btn-primario:active{ transform:scale(0.97); }
+
+.btn-secundario{
+  font-family:var(--font-body);
+  font-weight:600;
+  font-size:0.92rem;
+  padding:11px 20px;
+  border-radius:var(--radius);
+  background:transparent;
+  color:var(--hueso);
+  border:1px solid var(--carbon-borde);
+  cursor:pointer;
+}
+.btn-secundario:hover{ border-color:var(--hueso-opaco); }
+
+.btn-confirmar{
+  font-family:var(--font-body);
+  font-weight:600;
+  font-size:0.92rem;
+  padding:11px 20px;
+  border-radius:var(--radius);
+  background:var(--oliva);
+  color:var(--hueso);
+  border:1px solid transparent;
+  cursor:pointer;
+}
+
+.btn-anular{
+  font-family:var(--font-body);
+  font-weight:600;
+  font-size:0.92rem;
+  padding:11px 20px;
+  border-radius:var(--radius);
+  background:transparent;
+  color:var(--oxido);
+  border:1px solid var(--oxido);
+  cursor:pointer;
+}
+.btn-anular:hover{ background:rgba(162,59,46,0.12); }
+
+/* ---------- Campos ---------- */
+.campo-brasa{ margin-bottom:14px; }
+.campo-brasa label{
+  display:block;
+  font-size:0.8rem;
+  color:var(--hueso-tenue);
+  margin-bottom:6px;
+  font-family:var(--font-body);
+}
+.campo-brasa input{
+  width:100%;
+  background:var(--carbon);
+  border:1px solid var(--carbon-borde);
+  color:var(--hueso);
+  font-family:var(--font-body);
+  font-size:0.95rem;
+  padding:10px 12px;
+  border-radius:var(--radius);
+}
+.campo-brasa input:focus{ border-color:var(--brasa-viva); outline:none; }
+
+/* ---------- Tarjetas ---------- */
+.tarjeta-brasa{
+  background:var(--carbon-alto);
+  border:1px solid var(--carbon-borde);
+  border-radius:var(--radius-lg);
+}
+
+/* ---------- Foco accesible ---------- */
+:focus-visible{
+  outline:2px solid var(--brasa-viva);
+  outline-offset:3px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+}
