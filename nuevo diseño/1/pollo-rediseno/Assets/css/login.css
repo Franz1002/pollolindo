@@ -1,0 +1,165 @@
+/* =========================================================
+   LOGIN — Chicken Lindo
+   Usa los tokens de tokens.css. Pantalla de acceso al panel.
+   ========================================================= */
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--carbon);
+  font-family:var(--font-body);
+  color:var(--hueso);
+  position:relative;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Resplandor ambiental de brasa, sutil, no decorativo por decorar:
+   ubica al usuario en la marca antes de leer una sola palabra. */
+body::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 640px 420px at 80% 12%, rgba(199,81,31,0.22), transparent 65%),
+    radial-gradient(ellipse 520px 520px at 8% 92%, rgba(199,81,31,0.10), transparent 70%);
+  pointer-events:none;
+}
+
+.wrapper{
+  position:relative;
+  width:100%;
+  max-width:400px;
+  padding:24px;
+}
+
+#formContent{
+  background:var(--carbon-alto);
+  border:1px solid var(--carbon-borde);
+  border-radius:14px;
+  padding:44px 36px 36px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.35);
+}
+
+.fadeIn.first{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+#icon{
+  width:72px;
+  height:72px;
+  object-fit:cover;
+  border-radius:50%;
+  border:2px solid var(--brasa-tenue);
+  margin-bottom:18px;
+}
+
+.fadeIn.first h1{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:1.6rem;
+  letter-spacing:-0.01em;
+  margin:0 0 4px;
+  color:var(--hueso);
+  text-transform:none;
+}
+
+.fadeIn.first h1::after{
+  content:"Panel interno · Chicken Lindo";
+  display:block;
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--hueso-opaco);
+  margin-top:10px;
+  font-weight:400;
+}
+
+.form-group{
+  margin-bottom:18px;
+  text-align:left;
+}
+
+.form-group label{
+  display:block;
+  font-size:0.8rem;
+  color:var(--hueso-tenue);
+  margin-bottom:6px;
+}
+
+.form-group input{
+  width:100%;
+  background:var(--carbon);
+  border:1px solid var(--carbon-borde);
+  color:var(--hueso);
+  font-family:var(--font-body);
+  font-size:0.95rem;
+  padding:12px 14px;
+  border-radius:6px;
+  box-sizing:border-box;
+  transition:border-color 0.15s ease;
+}
+
+.form-group input::placeholder{ color:var(--hueso-opaco); }
+
+.form-group input:focus{
+  outline:none;
+  border-color:var(--brasa-viva);
+}
+
+#alerta{
+  font-family:var(--font-body);
+  font-size:0.85rem;
+  background:rgba(162,59,46,0.14);
+  border:1px solid var(--oxido);
+  color:var(--hueso);
+  border-radius:6px;
+  padding:10px 14px;
+  margin-bottom:16px;
+}
+
+.button-login{
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:6px;
+  background:var(--brasa);
+  color:var(--hueso);
+  font-family:var(--font-body);
+  font-weight:600;
+  font-size:0.98rem;
+  cursor:pointer;
+  transition:background 0.15s ease, transform 0.08s ease;
+}
+
+.button-login:hover{ background:var(--brasa-viva); }
+.button-login:active{ transform:scale(0.98); }
+
+#formFooter{
+  text-align:center;
+  margin-top:20px;
+}
+
+#formFooter a{
+  font-size:0.82rem;
+  color:var(--hueso-opaco);
+  text-decoration:none;
+}
+
+#formFooter a:hover{
+  color:var(--brasa-viva);
+  text-decoration:underline;
+}
+
+@media (max-width:420px){
+  #formContent{ padding:34px 24px 28px; }
+}
+
+/* Se quitó Bootstrap de esta pantalla; esta utilidad reemplaza
+   la única clase de Bootstrap que el formulario todavía usa. */
+.d-none{ display:none; }
