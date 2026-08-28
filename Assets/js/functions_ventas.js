@@ -169,17 +169,12 @@ function numeroALetras(num) {
   return resultado;
 }
 
-
-
-
-
-
-
 async function registrarCliente(nombre) {
-  const cliente = { nombre: nombre};
+  const cliente = { nombre: nombre };
 
   try {
-    const response = await fetch('http://localhost/pollo/Clientes/setCliente', {
+    const response = await fetch(base_url + '/Clientes/setCliente', {
+
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -222,7 +217,7 @@ async function finalizarVenta() {
     return;
   }
 
- 
+
 
   if (totalFinal <= 0) {
     alert("El total final no puede ser 0.");
@@ -289,7 +284,7 @@ async function finalizarVentaDoble() {
 
   // Obtener datos del cliente
   let nombreCliente = document.getElementById("nombre-cliente").value.trim();
- // let celularCliente = document.getElementById("numero-cliente").value.trim();
+  // let celularCliente = document.getElementById("numero-cliente").value.trim();
 
   // Si los campos están vacíos, asignar null para que no se registre un cliente
   let cliente_id = null;
@@ -320,7 +315,7 @@ async function finalizarVentaDoble() {
 
 async function obtenerUsuarioId() {
   try {
-    const response = await fetch("http://localhost/pollo/Usuarios/getUsuarioId");
+    const response = await fetch(base_url + '/Usuarios/getUsuarioId');
     const data = await response.json();
     if (data.usuario_id && data.usuario_id.id) {
       return data.usuario_id.id; // Aquí obtenemos el ID directamente
@@ -336,7 +331,7 @@ async function obtenerUsuarioId() {
 
 async function obtenerUsuarioNombre() {
   try {
-    const response = await fetch('http://localhost/pollo/Usuarios/getUsuarioId');
+    const response = await fetch(base_url + '/Usuarios/getUsuarioId');
     const data = await response.json();
 
     // Retorna un objeto con el nombre y apellido
@@ -366,7 +361,7 @@ async function registrarVenta(cliente_id, efectivo, cambio, totalFinal, descuent
   };
 
   try {
-    const responseVenta = await fetch('http://localhost/pollo/Ventas/registrarVenta', {
+    const responseVenta = await fetch(base_url + '/Ventas/registrarVenta', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(ventaData)
@@ -392,7 +387,7 @@ async function registrarVenta(cliente_id, efectivo, cambio, totalFinal, descuent
         subtotal: producto.subtotal
       }));
 
-      const responseDetalles = await fetch('http://localhost/pollo/Ventas/registrarDetalleVenta', {
+      const responseDetalles = await fetch(base_url + '/Ventas/registrarDetalleVenta', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ venta_id: venta_id, productos: detallesData })
@@ -427,7 +422,7 @@ async function registrarVenta(cliente_id, efectivo, cambio, totalFinal, descuent
           }))
         };
 
-        const responseTicket = await fetch('http://localhost/pollo/Ventas/registrarTicket', {
+        const responseTicket = await fetch(base_url + '/Ventas/registrarTicket', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(ticketData)
@@ -477,7 +472,7 @@ async function registrarVentaDoble(cliente_id, efectivo, cambio, totalFinal, des
   };
 
   try {
-    const responseVenta = await fetch('http://localhost/pollo/Ventas/registrarVenta', {
+    const responseVenta = await fetch(base_url + '/Ventas/registrarVenta', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(ventaData)
@@ -503,7 +498,7 @@ async function registrarVentaDoble(cliente_id, efectivo, cambio, totalFinal, des
         subtotal: producto.subtotal
       }));
 
-      const responseDetalles = await fetch('http://localhost/pollo/Ventas/registrarDetalleVenta', {
+      const responseDetalles = await fetch(base_url + '/Ventas/registrarDetalleVenta', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ venta_id: venta_id, productos: detallesData })
@@ -538,7 +533,7 @@ async function registrarVentaDoble(cliente_id, efectivo, cambio, totalFinal, des
           }))
         };
 
-        const responseTicket = await fetch('http://localhost/pollo/Ventas/registrarTicketDoble', {
+        const responseTicket = await fetch(base_url + '/Ventas/registrarTicketDoble', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(ticketData)
@@ -618,74 +613,3 @@ function reiniciarVenta() {
   document.getElementById('numero-mesa').value = '';
 }
 
-
-
-
-// Modificar la función generarTicketPDF para aceptar el numero_pedido y obtener el nombre del usuario
-/*async function generarTicketPDF(efectivo, cambio, numero_pedido) {
-  efectivo = parseFloat(efectivo) || 0;
-  cambio = parseFloat(cambio) || 0; // Convierte a número y si es NaN, asigna 0
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  // Información de la empresa y cliente
-  doc.setFont("courier", "bold");
-  doc.setFontSize(14);
-  doc.text("Chicken Lindo Srl.", 15, 10);
-  doc.text("Pollo Lindo.", 25, 15);
-  doc.setFontSize(8);
-  doc.text("Cochabamba - Bolivia", 24, 20);
-  doc.text("NIT: 1009311029", 10, 25);
-  doc.text(`FECHA: ${new Date().toLocaleDateString()}`, 10, 30);
-
-  let cliente = document.getElementById("nombre-cliente").value.trim();
-  cliente = cliente !== "" ? cliente : "SIN NOMBRE";
-  doc.text(`CLIENTE: ${cliente}`, 10, 35);
-
-  doc.text("=====================================", 10, 40);
-  doc.text("Cant  Descripcion       P.Unit  Total", 10, 45);
-  doc.text("=====================================", 10, 50);
-
-  let y = 55;
-  productos.forEach((p) => {
-    let cantidadStr = p.cantidad.toString().padEnd(4);
-    let nombreStr = p.name.padEnd(15);
-    let precioStr = p.price.toFixed(2).padStart(6);
-    let totalStr = p.total.toFixed(2).padStart(6);
-
-    doc.text(`${cantidadStr} ${nombreStr}    ${precioStr} ${totalStr}`, 10, y);
-    y += 5;
-  });
-
-  doc.text("====================================", 10, y + 2);
-  doc.text("MONTO A PAGAR: " + totalFinal.toFixed(2) + " Bs.", 10, y + 8);
-  doc.text("EFECTIVO: " + efectivo.toFixed(2) + " Bs.", 10, y + 12);
-  doc.text("CAMBIO: " + cambio.toFixed(2) + " Bs.", 10, y + 16);
-
-  let textoMonto = `SON ${numeroALetras(totalFinal)}`;
-  let fontSize = 8;
-
-  if (textoMonto.length > 40) fontSize = 6; // Reducir tamaño si el texto es largo
-  doc.setFontSize(fontSize);
-  doc.text(textoMonto, 10, y + 22);
-
-  doc.text("====================================", 10, y + 28);
-  doc.text(`PEDIDO: #${numero_pedido}`, 10, y + 33); // Aquí usamos el numero_pedido
-
-  let mesa = document.getElementById("numero-mesa").value.trim();
-  mesa = mesa !== "" ? `MESA: ${mesa}` : "PARA LLEVAR";
-  doc.text(mesa, 10, y + 38);
-
-  // Obtener el nombre y apellido del usuario que emitió el ticket
-  const usuario = await obtenerUsuarioNombre(); // Llamamos a la función asincrónica
-  const nombreEmitidoPor = usuario.nombre && usuario.apellido ? `${usuario.nombre} ${usuario.apellido}` : "Desconocido";
-
-  doc.text(`EMITIDO POR: ${nombreEmitidoPor}`, 10, y + 43); // Usamos el nombre y apellido del usuario
-
-  doc.text("Gracias por su compra", 10, y + 48);
-
-  doc.output("dataurlnewwindow");
-  doc.autoPrint();
-  window.open(doc.output("bloburl"), "_blank");
-}*/

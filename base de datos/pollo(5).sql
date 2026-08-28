@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-07-2026 a las 03:05:54
+-- Tiempo de generación: 28-08-2026 a las 04:25:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -33,6 +33,9 @@ CREATE TABLE `caja` (
   `fecha_apertura` datetime DEFAULT current_timestamp(),
   `fecha_cierre` datetime DEFAULT NULL,
   `total_cierre` decimal(10,2) DEFAULT NULL,
+  `efectivo_esperado` decimal(10,2) DEFAULT NULL,
+  `efectivo_declarado` decimal(10,2) DEFAULT NULL,
+  `diferencia` decimal(10,2) DEFAULT NULL,
   `estado` enum('abierta','cerrada') DEFAULT 'abierta',
   `cerrado_por` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
@@ -82,7 +85,38 @@ INSERT INTO `cliente` (`id_cliente`, `nombre_cliente`, `celular_cliente`) VALUES
 (5, '1 sin fideo', '123465'),
 (6, 'ala    canela', '123465'),
 (7, 'ala', '123465'),
-(8, 'juan', '123465');
+(8, 'juan', '123465'),
+(9, 'franz', '123465');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `compra`
+--
+
+CREATE TABLE `compra` (
+  `id_compra` int(11) NOT NULL,
+  `insumo_id` int(11) NOT NULL,
+  `usuario_id` int(11) DEFAULT NULL,
+  `cantidad` decimal(10,2) NOT NULL,
+  `costo_total` decimal(10,2) NOT NULL,
+  `fecha_compra` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `consumo_interno`
+--
+
+CREATE TABLE `consumo_interno` (
+  `id_consumo` int(11) NOT NULL,
+  `insumo_id` int(11) NOT NULL,
+  `usuario_id` int(11) DEFAULT NULL,
+  `cantidad` decimal(10,2) NOT NULL,
+  `motivo` varchar(100) NOT NULL,
+  `fecha_consumo` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 -- --------------------------------------------------------
 
@@ -19718,7 +19752,47 @@ INSERT INTO `detalle_venta` (`id_detalle`, `venta_id`, `menu_id`, `cantidad`, `s
 (19603, 15618, 24, 1, 9.00),
 (19604, 15618, 31, 1, 12.00),
 (19605, 15619, 22, 2, 100.00),
-(19606, 15620, 22, 2, 100.00);
+(19606, 15620, 22, 2, 100.00),
+(19607, 15621, 1, 1, 16.00),
+(19608, 15621, 33, 1, 6.00),
+(19609, 15622, 1, 1, 16.00),
+(19610, 15622, 33, 1, 6.00),
+(19611, 15623, 1, 1, 16.00),
+(19612, 15623, 33, 1, 6.00),
+(19613, 15624, 1, 1, 16.00),
+(19614, 15624, 33, 1, 6.00),
+(19615, 15625, 1, 1, 16.00),
+(19616, 15625, 33, 1, 6.00),
+(19617, 15626, 3, 1, 22.00),
+(19618, 15627, 21, 1, 28.00),
+(19619, 15628, 21, 2, 56.00),
+(19620, 15628, 2, 1, 17.00);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `insumo`
+--
+
+CREATE TABLE `insumo` (
+  `id_insumo` int(11) NOT NULL,
+  `nombre_insumo` varchar(50) NOT NULL,
+  `tipo_insumo` enum('pollo','bebida','otro') NOT NULL,
+  `unidad_medida` varchar(20) NOT NULL,
+  `stock_actual` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `costo_promedio` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `estado` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `insumo`
+--
+
+INSERT INTO `insumo` (`id_insumo`, `nombre_insumo`, `tipo_insumo`, `unidad_medida`, `stock_actual`, `costo_promedio`, `estado`) VALUES
+(1, 'Pollo crudo', 'pollo', 'presa', 0.00, 0.00, 1),
+(2, 'Arroz', 'otro', 'porcion', 0.00, 0.00, 1),
+(3, 'Papa', 'otro', 'porcion', 0.00, 0.00, 1),
+(4, 'Fideo', 'otro', 'porcion', 0.00, 0.00, 1);
 
 -- --------------------------------------------------------
 
@@ -19742,7 +19816,7 @@ CREATE TABLE `menu` (
 
 INSERT INTO `menu` (`id_menu`, `nombre_menu`, `precio_menu`, `categoria_id`, `detalle_menu`, `img_menu`, `estado`) VALUES
 (1, 'Economico', 16.00, 1, 'Pollo economico', '1742234466_PechugaBrasa.jpg', 1),
-(2, 'Economico ext.', 17.00, 1, 'pollo con doble porcion arroz', '1742234628_PechugaBrasa.jpg', 1),
+(2, 'Economico extra', 17.00, 1, 'pollo con doble porcion arroz', '1742234628_PechugaBrasa.jpg', 1),
 (3, 'Salchipollo', 22.00, 3, 'pollo con chorizo', '1742234783_images.jpg', 1),
 (4, 'Salchi con huevo', 25.00, 3, 'salchipollo con hjuevo', '1742234828_images.jpg', 1),
 (5, 'Coca cola 3L.', 22.00, 2, 'bebida', '1742234932_cocas.webp', 1),
@@ -19774,6 +19848,33 @@ INSERT INTO `menu` (`id_menu`, `nombre_menu`, `precio_menu`, `categoria_id`, `de
 (31, 'Broaster Eco.', 12.00, 3, 'Combo', '1742237645_images.jpg', 1),
 (32, 'Vasos', 2.50, 2, 'refresco', '1742247060_vital.webp', 1),
 (33, 'Jarra', 6.00, 2, 'refresco', '1742247080_vital.webp', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `receta`
+--
+
+CREATE TABLE `receta` (
+  `id_receta` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL,
+  `insumo_id` int(11) NOT NULL,
+  `cantidad_usada` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `receta`
+--
+
+INSERT INTO `receta` (`id_receta`, `menu_id`, `insumo_id`, `cantidad_usada`) VALUES
+(1, 1, 2, 1.00),
+(2, 1, 4, 1.00),
+(3, 1, 3, 1.00),
+(4, 1, 1, 1.00),
+(5, 2, 2, 2.00),
+(6, 2, 4, 1.00),
+(7, 2, 3, 1.00),
+(8, 2, 1, 1.00);
 
 -- --------------------------------------------------------
 
@@ -35442,7 +35543,15 @@ INSERT INTO `ticket` (`id_ticket`, `venta_id`, `cliente_id`, `fecha_emision`, `n
 (15617, 15617, NULL, '2025-10-09 21:04:32', 1, 1, 0.00, 38.00, 100.00, 62.00),
 (15618, 15618, NULL, '2025-10-09 21:05:32', 2, 1, 0.00, 21.00, 50.00, 29.00),
 (15619, 15619, NULL, '2026-07-20 20:49:31', 1, 1, 0.00, 100.00, 200.00, 100.00),
-(15620, 15620, NULL, '2026-07-20 20:49:33', 2, 1, 0.00, 100.00, 200.00, 100.00);
+(15620, 15620, NULL, '2026-07-20 20:49:33', 2, 1, 0.00, 100.00, 200.00, 100.00),
+(15621, 15621, NULL, '2026-08-27 21:45:59', 1, 1, 0.00, 22.00, 100.00, 78.00),
+(15622, 15622, NULL, '2026-08-27 21:46:00', 2, 1, 0.00, 22.00, 100.00, 78.00),
+(15623, 15623, NULL, '2026-08-27 21:46:02', 3, 1, 0.00, 22.00, 100.00, 78.00),
+(15624, 15624, NULL, '2026-08-27 21:46:03', 4, 1, 0.00, 22.00, 100.00, 78.00),
+(15625, 15625, NULL, '2026-08-27 21:46:03', 5, 1, 0.00, 22.00, 100.00, 78.00),
+(15626, 15626, NULL, '2026-08-27 21:47:33', 6, 1, 0.00, 22.00, 50.00, 28.00),
+(15627, 15627, NULL, '2026-08-27 22:13:23', 7, 1, 0.00, 28.00, 50.00, 22.00),
+(15628, 15628, 9, '2026-08-27 22:14:50', 8, 1, 0.00, 73.00, 100.00, 27.00);
 
 -- --------------------------------------------------------
 
@@ -35483,7 +35592,7 @@ CREATE TABLE `usuario` (
   `nombre` varchar(30) NOT NULL,
   `apellido` varchar(30) NOT NULL,
   `email` varchar(30) NOT NULL,
-  `password` varchar(30) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `cedula` varchar(30) NOT NULL,
   `celular` int(11) NOT NULL,
   `tipo` int(11) NOT NULL,
@@ -35495,8 +35604,8 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id`, `nombre`, `apellido`, `email`, `password`, `cedula`, `celular`, `tipo`, `estado`) VALUES
-(1, 'Ariel', 'Cori', 'ariel@mail.com', 'admin', 'admin', 68461425, 1, 1),
-(3, 'Davilia', 'Rios', 'davilia@mail.com', 'caja', 'caja', 56789012, 2, 1);
+(1, 'Ariel', 'Cori', 'ariel@mail.com', '$2y$10$bQNpSfOJ6YYxQa5pb43YIu9wX5yOuZC1zvUH8Y4cAhUY481NzzYda', 'admin', 68461425, 1, 1),
+(3, 'Davilia', 'Rios', 'davilia@mail.com', '$2y$10$jiYBDP2S4rS795DLQEfnSOxtuApYr4FNPbsRco.3Nh3CM3YN5ZjlO', 'caja', 56789012, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -51147,7 +51256,15 @@ INSERT INTO `venta` (`id_venta`, `usuario_id`, `fecha_venta`, `total_venta`) VAL
 (15617, 1, '2025-10-09 21:04:32', 38.00),
 (15618, 1, '2025-10-09 21:05:32', 21.00),
 (15619, 1, '2026-07-20 20:49:31', 100.00),
-(15620, 1, '2026-07-20 20:49:33', 100.00);
+(15620, 1, '2026-07-20 20:49:33', 100.00),
+(15621, 1, '2026-08-27 21:45:58', 22.00),
+(15622, 1, '2026-08-27 21:46:00', 22.00),
+(15623, 1, '2026-08-27 21:46:02', 22.00),
+(15624, 1, '2026-08-27 21:46:02', 22.00),
+(15625, 1, '2026-08-27 21:46:03', 22.00),
+(15626, 1, '2026-08-27 21:47:33', 22.00),
+(15627, 1, '2026-08-27 22:13:23', 28.00),
+(15628, 1, '2026-08-27 22:14:50', 73.00);
 
 --
 -- Índices para tablas volcadas
@@ -51174,6 +51291,22 @@ ALTER TABLE `cliente`
   ADD PRIMARY KEY (`id_cliente`);
 
 --
+-- Indices de la tabla `compra`
+--
+ALTER TABLE `compra`
+  ADD PRIMARY KEY (`id_compra`),
+  ADD KEY `compra_ibfk_1` (`insumo_id`),
+  ADD KEY `compra_ibfk_2` (`usuario_id`);
+
+--
+-- Indices de la tabla `consumo_interno`
+--
+ALTER TABLE `consumo_interno`
+  ADD PRIMARY KEY (`id_consumo`),
+  ADD KEY `consumo_ibfk_1` (`insumo_id`),
+  ADD KEY `consumo_ibfk_2` (`usuario_id`);
+
+--
 -- Indices de la tabla `detalle_venta`
 --
 ALTER TABLE `detalle_venta`
@@ -51182,11 +51315,25 @@ ALTER TABLE `detalle_venta`
   ADD KEY `menu_id` (`menu_id`);
 
 --
+-- Indices de la tabla `insumo`
+--
+ALTER TABLE `insumo`
+  ADD PRIMARY KEY (`id_insumo`);
+
+--
 -- Indices de la tabla `menu`
 --
 ALTER TABLE `menu`
   ADD PRIMARY KEY (`id_menu`),
   ADD KEY `fk_menu_categoria` (`categoria_id`);
+
+--
+-- Indices de la tabla `receta`
+--
+ALTER TABLE `receta`
+  ADD PRIMARY KEY (`id_receta`),
+  ADD KEY `receta_ibfk_1` (`menu_id`),
+  ADD KEY `receta_ibfk_2` (`insumo_id`);
 
 --
 -- Indices de la tabla `ticket`
@@ -51237,25 +51384,49 @@ ALTER TABLE `categoria`
 -- AUTO_INCREMENT de la tabla `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT de la tabla `compra`
+--
+ALTER TABLE `compra`
+  MODIFY `id_compra` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `consumo_interno`
+--
+ALTER TABLE `consumo_interno`
+  MODIFY `id_consumo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_venta`
 --
 ALTER TABLE `detalle_venta`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19607;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19621;
+
+--
+-- AUTO_INCREMENT de la tabla `insumo`
+--
+ALTER TABLE `insumo`
+  MODIFY `id_insumo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id_menu` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id_menu` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+
+--
+-- AUTO_INCREMENT de la tabla `receta`
+--
+ALTER TABLE `receta`
+  MODIFY `id_receta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `ticket`
 --
 ALTER TABLE `ticket`
-  MODIFY `id_ticket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15621;
+  MODIFY `id_ticket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15629;
 
 --
 -- AUTO_INCREMENT de la tabla `tipo`
@@ -51273,7 +51444,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `venta`
 --
 ALTER TABLE `venta`
-  MODIFY `id_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15621;
+  MODIFY `id_venta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15629;
 
 --
 -- Restricciones para tablas volcadas
@@ -51287,6 +51458,20 @@ ALTER TABLE `caja`
   ADD CONSTRAINT `caja_ibfk_2` FOREIGN KEY (`cerrado_por`) REFERENCES `usuario` (`id`);
 
 --
+-- Filtros para la tabla `compra`
+--
+ALTER TABLE `compra`
+  ADD CONSTRAINT `compra_ibfk_1` FOREIGN KEY (`insumo_id`) REFERENCES `insumo` (`id_insumo`),
+  ADD CONSTRAINT `compra_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`);
+
+--
+-- Filtros para la tabla `consumo_interno`
+--
+ALTER TABLE `consumo_interno`
+  ADD CONSTRAINT `consumo_ibfk_1` FOREIGN KEY (`insumo_id`) REFERENCES `insumo` (`id_insumo`),
+  ADD CONSTRAINT `consumo_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`);
+
+--
 -- Filtros para la tabla `detalle_venta`
 --
 ALTER TABLE `detalle_venta`
@@ -51298,6 +51483,13 @@ ALTER TABLE `detalle_venta`
 --
 ALTER TABLE `menu`
   ADD CONSTRAINT `fk_menu_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id_categoria`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `receta`
+--
+ALTER TABLE `receta`
+  ADD CONSTRAINT `receta_ibfk_1` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id_menu`),
+  ADD CONSTRAINT `receta_ibfk_2` FOREIGN KEY (`insumo_id`) REFERENCES `insumo` (`id_insumo`);
 
 --
 -- Filtros para la tabla `ticket`
