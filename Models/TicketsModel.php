@@ -19,8 +19,7 @@ class TicketsModel extends Mysql
     v.fecha_venta,
     v.total_venta,
     c.id_cliente,
-    c.nombre_cliente,
-    c.cedula_cliente,
+    c.nombre_cliente,   
     c.celular_cliente,
     u.id AS usuario_id,
     CONCAT(u.nombre, ' ', u.apellido) AS nombre_usuario_completo,  -- Combina nombre y apellido

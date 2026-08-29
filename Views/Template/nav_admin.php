@@ -103,7 +103,7 @@
 </li>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
     let currentUrl = window.location.pathname;
 
     // Mantiene abierto el menú si estamos en compras o ventas
@@ -126,6 +126,14 @@
       <i class="mdi mdi-printer" style="color:hotpink;"></i>
     </span>
     <span class="menu-title">Tickets</span>
+  </a>
+</li>
+<li class="nav-item menu-items">
+  <a class="nav-link" href="<?= base_url(); ?>/caja">
+    <span class="menu-icon">
+      <i class="mdi mdi-cash-register"></i>
+    </span>
+    <span class="menu-title">Caja</span>
   </a>
 </li>
 <li class="nav-item menu-items">
@@ -164,7 +172,7 @@
           <?php
           $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
           $meses = ['', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-          $fechaHoy = $dias[date('w')] . ' ' . date('d') . ' de ' . $meses[(int)date('n')] . ', ' . date('Y');
+          $fechaHoy = $dias[date('w')] . ' ' . date('d') . ' de ' . $meses[(int) date('n')] . ', ' . date('Y');
           ?>
           <span class="fecha-navbar"><i class="mdi mdi-calendar-blank"></i> <?= $fechaHoy; ?></span>
         </li>
@@ -173,7 +181,8 @@
         <li class="nav-item dropdown">
           <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
             <div class="navbar-profile">
-              <p class="mb-0 d-none d-sm-block navbar-profile-name"><?= $_SESSION['idUsuario']['nombre']; ?> <?= $_SESSION['idUsuario']['apellido']; ?></p>
+              <p class="mb-0 d-none d-sm-block navbar-profile-name"><?= $_SESSION['idUsuario']['nombre']; ?>
+                <?= $_SESSION['idUsuario']['apellido']; ?></p>
               <i class="mdi mdi-menu-down d-none d-sm-block"></i>
             </div>
           </a>

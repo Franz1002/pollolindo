@@ -440,14 +440,26 @@ async function registrarVenta(cliente_id, efectivo, cambio, totalFinal, descuent
         }
 
         if (!dataTicket.status) {
-          alert("Error al generar el ticket: " + dataTicket.msg);
-        }
+  alert("Error al generar el ticket: " + dataTicket.msg);
+} else {
+  Swal.fire('Venta registrada', 'El ticket se generó correctamente.', 'success');
+  reiniciarVenta();
+}
       } else {
         alert("Error al registrar los detalles de la venta: " + dataDetalles.msg);
       }
     } else {
-      alert("Error al registrar la venta: " + dataVenta.msg);
-    }
+  if (dataVenta.requiere_caja) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Caja cerrada',
+      text: dataVenta.msg,
+      confirmButtonText: 'Ir a Caja'
+    }).then(() => { window.location.href = base_url + '/caja'; });
+  } else {
+    alert("Error al registrar la venta: " + dataVenta.msg);
+  }
+}
   } catch (error) {
     console.error("Error al registrar la venta:", error);
     alert("Hubo un problema al registrar la venta.");
@@ -551,14 +563,26 @@ async function registrarVentaDoble(cliente_id, efectivo, cambio, totalFinal, des
         }
 
         if (!dataTicket.status) {
-          alert("Error al generar el ticket: " + dataTicket.msg);
-        }
+  alert("Error al generar el ticket: " + dataTicket.msg);
+} else {
+  Swal.fire('Venta registrada', 'El ticket se generó correctamente.', 'success');
+  reiniciarVenta();
+}
       } else {
         alert("Error al registrar los detalles de la venta: " + dataDetalles.msg);
       }
-    } else {
-      alert("Error al registrar la venta: " + dataVenta.msg);
-    }
+   } else {
+  if (dataVenta.requiere_caja) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Caja cerrada',
+      text: dataVenta.msg,
+      confirmButtonText: 'Ir a Caja'
+    }).then(() => { window.location.href = base_url + '/caja'; });
+  } else {
+    alert("Error al registrar la venta: " + dataVenta.msg);
+  }
+}
   } catch (error) {
     console.error("Error al registrar la venta:", error);
     alert("Hubo un problema al registrar la venta.");
