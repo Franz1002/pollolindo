@@ -1,9 +1,6 @@
 <?php
 class Menus extends Controllers
 {
-	public $views;
-	public $model;
-
 	public function __construct()
 	{
 		parent::__construct();
@@ -41,6 +38,7 @@ class Menus extends Controllers
 		die();
 	}
 
+
 	public function getMenu($id_menu)
 	{
 		$id_menu = intval($id_menu);
@@ -59,88 +57,80 @@ class Menus extends Controllers
 	public function registrarMenu()
 	{
 		$this->esAdmin();
-		// Obtener los datos del formulario
-		$strNombreMenu = $_POST['nombre_menu'];
-		$floatPrecioMenu = floatval($_POST['precio_menu']);
-		$intCategoriaId = intval($_POST['categoria_id']);
-		$strDetalleMenu = $_POST['detalle_menu'];
+		if (!$_POST) {
+			die();
+		}
 
-		// Manejo de la imagen
-		$img_menu = 'defect.png'; // Imagen predeterminada
-		if (isset($_FILES['img_menu']) && $_FILES['img_menu']['error'] === UPLOAD_ERR_OK) {
-			$nombreImagen = time() . '_' . $_FILES['img_menu']['name']; // Evitar nombres repetidos
-			$rutaDestino = "C:/xampp/htdocs/pollo/Assets/images/imgMenu/" . $nombreImagen;
+		$strNombreMenu = trim($_POST['nombre_menu'] ?? '');
+		$floatPrecioMenu = floatval($_POST['precio_menu'] ?? 0);
+		$intCategoriaId = intval($_POST['categoria_id'] ?? 0);
+		$strDetalleMenu = trim($_POST['detalle_menu'] ?? '');
 
-			// Mover el archivo a la carpeta de imágenes
-			if (move_uploaded_file($_FILES['img_menu']['tmp_name'], $rutaDestino)) {
-				$img_menu = $nombreImagen; // Solo actualiza si se movió correctamente
+		if ($strNombreMenu === '' || $floatPrecioMenu <= 0 || $intCategoriaId <= 0) {
+			$this->responder(false, 'Completa el nombre, un precio mayor a 0 y la categoría.');
+		}
+
+		// Imagen opcional: si se envió, tiene que ser válida
+		$img_menu = 'defect.png';
+		if ($this->seEnvioImagen()) {
+			$img_menu = $this->guardarImagen($_FILES['img_menu']);
+			if ($img_menu === null) {
+				$this->responder(false, 'La imagen debe ser JPG, PNG o WEBP y pesar como máximo 2 MB.');
 			}
 		}
 
-		// Llamar al modelo para registrar el menú
-		$request_menu = $this->model->registerMenu(
-			$strNombreMenu,
-			$floatPrecioMenu,
-			$intCategoriaId,
-			$strDetalleMenu,
-			$img_menu
-		);
-
+		$request_menu = $this->model->registerMenu($strNombreMenu, $floatPrecioMenu, $intCategoriaId, $strDetalleMenu, $img_menu);
 		if ($request_menu > 0) {
-			$arrResponse = array('status' => true, 'msg' => 'Menú registrado correctamente.');
-		} else {
-			$arrResponse = array('status' => false, 'msg' => '¡Atención! Hubo un error al registrar el menú.');
+			$this->responder(true, 'Menú registrado correctamente.');
 		}
-
-		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
-		die();
+		$this->borrarImagen($img_menu);
+		$this->responder(false, '¡Atención! Hubo un error al registrar el menú.');
 	}
 
 	public function actualizarMenu()
 	{
 		$this->esAdmin();
-		if ($_POST) {
-			$intIdMenu = intval($_POST['idMenu']);
-			$strNombreMenu = $_POST['nombre_menu'];
-			$floatPrecioMenu = floatval($_POST['precio_menu']);
-			$intCategoriaId = intval($_POST['categoria_id']);
-			$strDetalleMenu = $_POST['detalle_menu'];
-			$strEstado = intval($_POST['estado']);
-
-			// Verifica si se subió una nueva imagen
-			if (isset($_FILES['img_menu']) && $_FILES['img_menu']['error'] === UPLOAD_ERR_OK) {
-				$nombreImagen = time() . '_' . $_FILES['img_menu']['name'];
-				$rutaDestino = "C:/xampp/htdocs/pollo/Assets/images/imgMenu/" . $nombreImagen;
-
-				if (move_uploaded_file($_FILES['img_menu']['tmp_name'], $rutaDestino)) {
-					$img_menu = $nombreImagen;
-				} else {
-					$img_menu = $_POST['imgActual']; // Si no se pudo subir, usa la actual
-				}
-			} else {
-				$img_menu = $_POST['imgActual']; // No se subió imagen nueva
-			}
-
-			// Llamada al modelo para actualizar
-			$request = $this->model->updateMenu(
-				$intIdMenu,
-				$strNombreMenu,
-				$floatPrecioMenu,
-				$intCategoriaId,
-				$strDetalleMenu,
-				$img_menu,
-				$strEstado
-			);
-
-			if ($request) {
-				$arrResponse = array('status' => true, 'msg' => 'Menú actualizado correctamente.');
-			} else {
-				$arrResponse = array('status' => false, 'msg' => 'No se pudo actualizar el menú.');
-			}
-
-			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+		if (!$_POST) {
+			die();
 		}
-		die();
+
+		$intIdMenu = intval($_POST['idMenu'] ?? 0);
+		$strNombreMenu = trim($_POST['nombre_menu'] ?? '');
+		$floatPrecioMenu = floatval($_POST['precio_menu'] ?? 0);
+		$intCategoriaId = intval($_POST['categoria_id'] ?? 0);
+		$strDetalleMenu = trim($_POST['detalle_menu'] ?? '');
+		$intEstado = intval($_POST['estado'] ?? 1);
+
+		// La imagen actual se toma de la base de datos, no del formulario
+		$actual = $this->model->selectMenuById($intIdMenu);
+		if (empty($actual)) {
+			$this->responder(false, 'El producto no existe.');
+		}
+		if ($strNombreMenu === '' || $floatPrecioMenu <= 0 || $intCategoriaId <= 0) {
+			$this->responder(false, 'Completa el nombre, un precio mayor a 0 y la categoría.');
+		}
+
+		$imgAnterior = $actual[0]['img_menu'];
+		$img_menu = $imgAnterior;
+		if ($this->seEnvioImagen()) {
+			$img_menu = $this->guardarImagen($_FILES['img_menu']);
+			if ($img_menu === null) {
+				$this->responder(false, 'La imagen debe ser JPG, PNG o WEBP y pesar como máximo 2 MB.');
+			}
+		}
+
+		$request = $this->model->updateMenu($intIdMenu, $strNombreMenu, $floatPrecioMenu, $intCategoriaId, $strDetalleMenu, $img_menu, $intEstado);
+		if ($request) {
+			// Si se cambió la imagen, la anterior ya no sirve
+			if ($img_menu !== $imgAnterior) {
+				$this->borrarImagen($imgAnterior);
+			}
+			$this->responder(true, 'Menú actualizado correctamente.');
+		}
+		if ($img_menu !== $imgAnterior) {
+			$this->borrarImagen($img_menu);
+		}
+		$this->responder(false, 'No se pudo actualizar el menú.');
 	}
 
 	public function deleteMenu()
@@ -156,6 +146,48 @@ class Menus extends Controllers
 			}
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 		}
+		die();
+	}
+
+	private function seEnvioImagen()
+	{
+		return isset($_FILES['img_menu']) && $_FILES['img_menu']['error'] !== UPLOAD_ERR_NO_FILE;
+	}
+
+	// Guarda la imagen con un nombre aleatorio y devuelve ese nombre, o null si no es válida
+	private function guardarImagen(array $archivo)
+	{
+		if ($archivo['error'] !== UPLOAD_ERR_OK || $archivo['size'] > 2 * 1024 * 1024) {
+			return null;
+		}
+
+		// Se revisa el contenido real del archivo, no el nombre ni lo que dice el navegador
+		$tiposPermitidos = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+		$info = @getimagesize($archivo['tmp_name']);
+		if ($info === false || !isset($tiposPermitidos[$info['mime']])) {
+			return null;
+		}
+		$tipo = $info['mime'];
+
+		$nombre = time() . '_' . bin2hex(random_bytes(6)) . '.' . $tiposPermitidos[$tipo];
+		$destino = __DIR__ . '/../Assets/images/imgMenu/' . $nombre;
+		return move_uploaded_file($archivo['tmp_name'], $destino) ? $nombre : null;
+	}
+
+	private function borrarImagen(string $nombre)
+	{
+		if ($nombre === '' || $nombre === 'defect.png') {
+			return;
+		}
+		$ruta = __DIR__ . '/../Assets/images/imgMenu/' . basename($nombre);
+		if (is_file($ruta)) {
+			unlink($ruta);
+		}
+	}
+
+	private function responder(bool $status, string $msg)
+	{
+		echo json_encode(['status' => $status, 'msg' => $msg], JSON_UNESCAPED_UNICODE);
 		die();
 	}
 }

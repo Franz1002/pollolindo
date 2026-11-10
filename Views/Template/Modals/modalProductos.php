@@ -49,7 +49,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="img_menu">Imagen del Menú</label>
-                                <input type="file" class="form-control" id="img_menu" name="img_menu">
+                                <input type="file" class="form-control" id="img_menu" name="img_menu" accept="image/jpeg,image/png,image/webp">
                             </div>
                             <div class="form-group mt-2 text-center">
                                 <img id="imgPreview" src="" alt="Vista previa de imagen" style="max-width: 100%; height: auto; display: none; border-radius: 10px;">

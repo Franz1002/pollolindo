@@ -123,7 +123,7 @@ function registrarMenu(e) {
                     Swal.fire({
                         icon: 'error',
                         title: '¡Error!',
-                        text: 'Hubo un error al registrar el menú.',
+                        text: result.msg,
                     });
                 }
             })
@@ -219,7 +219,7 @@ function actualizarMenu(e) {
                 Swal.fire({
                     icon: 'error',
                     title: '¡Error!',
-                    text: 'Hubo un error al actualizar el menú.',
+                    text: result.msg,
                 });
             }
         })
