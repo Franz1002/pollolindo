@@ -1,0 +1,7 @@
+# Entorno y modelo de la IA
+ia_caja/venv/
+ia_caja/__pycache__/
+ia_caja/*.pkl
+
+# Registros
+*.log
