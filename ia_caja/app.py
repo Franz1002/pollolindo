@@ -7,8 +7,6 @@ import os
 app = Flask(__name__)
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "modelo_caja.pkl")
 
-# Estas 6 variables son las que describen un cierre de caja.
-# El orden importa: tiene que ser el mismo al entrenar y al evaluar.
 FEATURES = [
     "diferencia_relativa",
     "cantidad_tickets",
@@ -39,7 +37,7 @@ def entrenar():
     X = np.array([vectorizar(r) for r in historico])
     modelo = IsolationForest(
         n_estimators=150,
-        contamination=0.08,  # se asume que un 8% de los cierres históricos podría ser atípico
+        contamination=0.08, 
         random_state=42
     )
     modelo.fit(X)

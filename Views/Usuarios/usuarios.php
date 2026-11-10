@@ -107,7 +107,7 @@ getModal('modalUsuarios', $data); ?>
   <!-- partial:<?= base_url_template(); ?>/partials/_footer.html -->
   <footer class="footer">
     <div class="d-sm-flex justify-content-center justify-content-sm-between">
-      <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © Ariel Cori 2025</span>
+      <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © Ariel Cori 2026</span>
     </div>
   </footer>
   <!-- partial -->
