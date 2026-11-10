@@ -142,13 +142,13 @@ async function viewUser(id) {
 
 function deletUser(id) {
     Swal.fire({
-        title: 'Eliminar usuario',
-        text: '¿Confirmas que deseas eliminar este usuario?',
+        title: 'Dar de baja al usuario',
+        text: 'Ya no podrá entrar al sistema, pero sus ventas y cierres de caja se conservan.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#5B77F5',
         cancelButtonColor: '#FF7272',
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'Sí, dar de baja',
         cancelButtonText: 'No, cancelar'
     }).then(async (respuesta) => {
         if (!respuesta.isConfirmed) {
@@ -166,8 +166,8 @@ function deletUser(id) {
                 Swal.fire('Error', result.msg, 'error');
             }
         } catch (error) {
-            console.error('Error al eliminar el usuario:', error);
-            Swal.fire('Error', 'No se pudo eliminar el usuario.', 'error');
+            console.error('Error al dar de baja al usuario:', error);
+            Swal.fire('Error', 'No se pudo dar de baja al usuario.', 'error');
         }
     });
 }

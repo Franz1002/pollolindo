@@ -139,11 +139,12 @@ class Usuarios extends Controllers
 		$this->esAdmin();
 		if ($_POST) {
 			$intIdUsuario = intval($_POST['idUsuario']);
-			$requestDel = $this->model->deletUsuario($intIdUsuario);
-			if ($requestDel) {
-				$arrResponse = array('status' => true, 'msg' => 'Se ha eliminado');
+			if ($intIdUsuario == $_SESSION['idUsuario']['id']) {
+				$arrResponse = array('status' => false, 'msg' => 'No puedes dar de baja tu propio usuario.');
+			} elseif ($this->model->deletUsuario($intIdUsuario)) {
+				$arrResponse = array('status' => true, 'msg' => 'Usuario dado de baja. Ya no podrá entrar al sistema.');
 			} else {
-				$arrResponse = array('status' => false, 'msg' => 'Error al eliminar');
+				$arrResponse = array('status' => false, 'msg' => 'No se pudo dar de baja al usuario.');
 			}
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 		}

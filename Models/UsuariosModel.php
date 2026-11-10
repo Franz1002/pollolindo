@@ -87,9 +87,10 @@ class UsuariosModel extends Mysql
         return $this->update($query, $arrData);
     }
 
+    // No se borra: se desactiva (estado 0) para conservar sus ventas, cajas y compras
     public function deletUsuario(int $id)
     {
-        $query = "DELETE FROM usuario WHERE id = ?";
-        return $this->delete($query, [$id]);
+        $query = "UPDATE usuario SET estado = 0 WHERE id = ?";
+        return $this->update($query, [$id]);
     }
 }
