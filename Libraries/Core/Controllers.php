@@ -2,15 +2,18 @@
 
 class Controllers
 {
+	public $views;
+	public $model;
+
 	public function __construct()
 	{
 		$this->views = new Views();
 		$this->loadModel();
 	}
 
-	public function loadModel()
+	protected function loadModel()
 	{
-		//HomeModel.php
+		// Ej.: Ventas -> Models/VentasModel.php
 		$model = get_class($this) . "Model";
 		$routClass = "Models/" . $model . ".php";
 		if (file_exists($routClass)) {
@@ -18,14 +21,12 @@ class Controllers
 			$this->model = new $model();
 		}
 	}
-	public function esAdmin()
+
+	protected function esAdmin()
 	{
 		if (empty($_SESSION['idUsuario']['tipo']) || $_SESSION['idUsuario']['tipo'] != 1) {
-			header('location: ' . base_url());
-			die();
+			header('Location: ' . base_url());
+			exit;
 		}
 	}
 }
-
-
-?>

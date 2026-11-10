@@ -8,11 +8,7 @@ class Categorias extends Controllers
 	public function __construct()
 	{
 
-		parent::__construct();
-		session_start();
-		if (empty($_SESSION['login'])) {
-			header('location: ' . base_url());
-		}
+		parent::__construct();		
 	}
 
 	public function categorias()

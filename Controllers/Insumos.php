@@ -7,10 +7,7 @@ class Insumos extends Controllers
     public function __construct()
     {
         parent::__construct();
-        session_start();
-        if (empty($_SESSION['login'])) {
-            header('location: ' . base_url());
-        }
+     
     }
 
     public function insumos()

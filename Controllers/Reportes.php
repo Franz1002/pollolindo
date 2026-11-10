@@ -12,10 +12,7 @@ class Reportes extends Controllers
     public function __construct()
     {
         parent::__construct();
-        session_start();
-        if (empty($_SESSION['login'])) {
-            header('location: ' . base_url());
-        }
+        $this->esAdmin();
     }
 
     public function compras()
@@ -212,7 +209,7 @@ class Reportes extends Controllers
 
     public function reporteArqueoMensual()
     {
-        
+
         $fechaInicio = $_POST['fechaInicio'] . ' 00:00:00';
         $fechaFin = $_POST['fechaFin'] . ' 23:59:59';
 

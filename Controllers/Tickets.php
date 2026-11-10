@@ -7,10 +7,7 @@ class Tickets extends Controllers
 	{
 
 		parent::__construct();
-		session_start();
-		if (empty($_SESSION['login'])) {
-			header('location: ' . base_url());
-		}
+		
 	}
 
 	public function tickets()

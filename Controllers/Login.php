@@ -6,15 +6,16 @@ class Login extends Controllers
     public $model;
     public function __construct()
     {
-        session_start();
-        if (isset($_SESSION['login'])) {
-            header('location: ' . BASE_URL . '/inicio');
-        }
         parent::__construct();
     }
 
     public function login()
     {
+        // Si ya inició sesión, lo mandamos directo al inicio
+        if (!empty($_SESSION['login'])) {
+            header('Location: ' . base_url() . '/inicio');
+            exit;
+        }
         $this->views->getView($this, "login");
     }
 
@@ -55,11 +56,12 @@ class Login extends Controllers
 
         die();
     }
+
     public function logout()
     {
-        session_start();
         session_unset();
         session_destroy();
-        header("location: " . BASE_URL);
+        header('Location: ' . base_url());
+        exit;
     }
 }

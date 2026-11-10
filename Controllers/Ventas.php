@@ -13,10 +13,7 @@ class Ventas extends Controllers
 	{
 
 		parent::__construct();
-		session_start();
-		if (empty($_SESSION['login'])) {
-			header('location: ' . base_url());
-		}
+		
 	}
 
 	public function ventas()
@@ -124,7 +121,7 @@ class Ventas extends Controllers
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 		die();
 	}
-	public function obtenerNumeroPedido()
+	private function obtenerNumeroPedido()
 	{
 		$request_numero_pedido = $this->model->obtenerNumPedido();
 		return $request_numero_pedido ?? 1; // En caso de que no haya registros, devuelve 1
@@ -225,7 +222,7 @@ class Ventas extends Controllers
 
 	// Asegúrate de incluir la librería de EscPos
 
-	public function imprimirTicket($ticket_id)
+	private function imprimirTicket($ticket_id)
 	{
 		set_error_handler(function ($severity, $message, $file, $line) {
 			throw new \ErrorException($message, 0, $severity, $file, $line);
@@ -301,7 +298,7 @@ class Ventas extends Controllers
 		}
 	}
 
-	public function imprimirTicketDoble($ticket_id)
+	private function imprimirTicketDoble($ticket_id)
 	{
 		set_error_handler(function ($severity, $message, $file, $line) {
 			throw new \ErrorException($message, 0, $severity, $file, $line);
