@@ -34,7 +34,7 @@
     }
     function getModal(string $nameModal, $data)
     {
-        $view_modal = "Views/template/Modals/{$nameModal}.php";
+        $view_modal = "Views/Template/Modals/{$nameModal}.php";
         require_once $view_modal;
     }
     //Elimina exceso de espacios entre palabras
