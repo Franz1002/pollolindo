@@ -1,9 +1,13 @@
 <script>
   const base_url = "<?= base_url(); ?>";
+  const minutos_inactividad = <?= MINUTOS_INACTIVIDAD; ?>;
 </script>
 
 <!-- Incluir jQuery (Debe ir antes que Bootstrap y Bootstrap Select) -->
 <script src="<?= base_url(); ?>/Assets/js/librerias/jquery-3.6.0.min.js"></script>
+
+<!-- Cierre de sesión por inactividad -->
+<script src="<?= media(); ?>/js/sesion.js"></script>
 
 <!-- Bootstrap JS -->
 <script src="<?= base_url(); ?>/Assets/js/librerias/bootstrap.min.js"></script>

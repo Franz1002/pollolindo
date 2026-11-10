@@ -2,8 +2,6 @@
 
 class Login extends Controllers
 {
-    public $views;
-    public $model;
     public function __construct()
     {
         parent::__construct();
@@ -16,52 +14,69 @@ class Login extends Controllers
             header('Location: ' . base_url() . '/inicio');
             exit;
         }
-        $this->views->getView($this, "login");
+        $data['expirada'] = isset($_GET['expirada']);
+        $this->views->getView($this, "login", $data);
     }
 
     public function log()
     {
-
-        if ($_POST) {
-            if (empty($_POST['user']) || empty($_POST['password'])) {
-                $arrResponse = array('status' => false, 'msg' => 'Error de datos');
-            } else {
-                $strUser = strtolower($_POST['user']);
-                $strPassword = $_POST['password'];
-                $requestUser = $this->model->getUsuario($strUser);
-                if (empty($requestUser) || !password_verify($strPassword, $requestUser['password'])) {
-                    $arrResponse = array('status' => false, 'msg' => 'El usuario o la contraseña es incorrecto.');
-                    //incorrecto
-                } else {
-                    $arrData = $requestUser;
-                    if ($arrData['estado'] == 1) {
-                        $_SESSION['idUsuario'] = $arrData['id'];
-                        $_SESSION['login'] = true;
-                        $_SESSION['timeout'] = true;
-                        $_SESSION['inicio'] = time();
-
-                        $arrData = $this->model->sessionLogin($_SESSION['idUsuario']);
-
-                        $_SESSION['idUsuario'] = $arrData;
-
-                        $arrResponse = 1; //ok entro
-
-                    } else {
-                        $arrResponse = array('status' => false, 'msg' => 'Usuario inactivo.');
-                    }
-                }
-            }
-            echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+        if (!$_POST) {
+            die();
         }
 
+        $strUser = strtolower(trim($_POST['user'] ?? ''));
+        $strPassword = $_POST['password'] ?? '';
+        if ($strUser === '' || $strPassword === '') {
+            $this->responder(false, 'Escribe tu usuario y tu contraseña.');
+        }
+
+        // Si alguien falló muchas veces seguidas con este usuario, tiene que esperar
+        $minutos = $this->model->minutosDeBloqueo($strUser);
+        if ($minutos > 0) {
+            $this->responder(false, "Demasiados intentos fallidos. Espera {$minutos} min y vuelve a intentar.");
+        }
+
+        $requestUser = $this->model->getUsuario($strUser);
+        if (empty($requestUser) || !password_verify($strPassword, $requestUser['password'])) {
+            $this->model->registrarIntentoFallido($strUser, $_SERVER['REMOTE_ADDR'] ?? '');
+            $this->responder(false, 'El usuario o la contraseña es incorrecto.');
+        }
+        if ((int)$requestUser['estado'] !== 1) {
+            $this->responder(false, 'Tu usuario está dado de baja. Habla con el administrador.');
+        }
+
+        $this->model->limpiarIntentos($strUser);
+
+        // Identificador de sesión nuevo al entrar: así no sirve uno que alguien haya copiado antes
+        session_regenerate_id(true);
+        $_SESSION['login'] = true;
+        $_SESSION['idUsuario'] = $this->model->sessionLogin((int)$requestUser['id']);
+        $_SESSION['ultima_actividad'] = time();
+
+        $this->responder(true, 'Bienvenido.');
+    }
+
+    // El navegador lo llama mientras se usa el sistema, para que la sesión no se cierre
+    public function ping()
+    {
+        echo json_encode(['status' => !empty($_SESSION['login'])]);
         die();
     }
 
     public function logout()
     {
-        session_unset();
+        $_SESSION = [];
         session_destroy();
-        header('Location: ' . base_url());
+        setcookie(session_name(), '', ['expires' => time() - 3600, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+
+        $destino = isset($_GET['expirada']) ? '/login?expirada=1' : '/login';
+        header('Location: ' . base_url() . $destino);
         exit;
+    }
+
+    private function responder(bool $status, string $msg)
+    {
+        echo json_encode(['status' => $status, 'msg' => $msg], JSON_UNESCAPED_UNICODE);
+        die();
     }
 }

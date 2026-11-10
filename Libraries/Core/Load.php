@@ -7,10 +7,32 @@ if (!preg_match('/^[A-Za-z]+$/', $controller) || !preg_match('/^[A-Za-z][A-Za-z0
 	exit;
 }
 
+// Si pasó mucho tiempo sin usar el sistema, la sesión se cierra sola
+$sesionExpirada = false;
+if (!empty($_SESSION['login'])) {
+	$ultimaActividad = $_SESSION['ultima_actividad'] ?? time();
+	if (time() - $ultimaActividad > MINUTOS_INACTIVIDAD * 60) {
+		$_SESSION = [];
+		session_regenerate_id(true);
+		$sesionExpirada = true;
+	} else {
+		$_SESSION['ultima_actividad'] = time();
+	}
+}
+
 // Todo el sistema pide sesión iniciada, menos el login
 $controladoresPublicos = ['Login'];
 if (!in_array($controller, $controladoresPublicos, true) && empty($_SESSION['login'])) {
-	header('Location: ' . base_url() . '/login');
+	// Las peticiones hechas desde JavaScript reciben un 401; las pantallas van al login
+	$esPeticionJs = (isset($_SERVER['HTTP_SEC_FETCH_MODE']) && $_SERVER['HTTP_SEC_FETCH_MODE'] !== 'navigate')
+		|| !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
+	if ($esPeticionJs) {
+		http_response_code(401);
+		header('Content-Type: application/json; charset=utf-8');
+		echo json_encode(['status' => false, 'msg' => 'Tu sesión terminó. Vuelve a iniciar sesión.'], JSON_UNESCAPED_UNICODE);
+		exit;
+	}
+	header('Location: ' . base_url() . '/login' . ($sesionExpirada ? '?expirada=1' : ''));
 	exit;
 }
 

@@ -44,9 +44,11 @@
           <label for="password">Contraseña</label>
           <input type="password" id="password" class="fadeIn second" name="password" placeholder="Tu contraseña" autocomplete="current-password">
         </div>
-        <div class="alert alert-danger text-center d-none" id="alerta" role="alert">
-
-        </div>
+        <?php if (!empty($data['expirada'])) { ?>
+          <div class="alert alert-danger text-center" id="alerta" role="alert">Tu sesión se cerró por inactividad. Vuelve a entrar.</div>
+        <?php } else { ?>
+          <div class="alert alert-danger text-center d-none" id="alerta" role="alert"></div>
+        <?php } ?>
         <div class="fadeIn fourth">
           <button class="button-login" type="submit" onclick="enterLogin(event);">Entrar</button>
         </div>

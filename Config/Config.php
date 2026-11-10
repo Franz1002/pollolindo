@@ -22,6 +22,12 @@
 	const SMONEY = "Bs";
 
 	
+	//Seguridad de la sesión
+	const MINUTOS_INACTIVIDAD = 60; // la sesión se cierra sola tras este tiempo sin uso
+	const MAX_INTENTOS_LOGIN = 5;   // intentos fallidos permitidos...
+	const MINUTOS_BLOQUEO = 2;     // ...dentro de estos minutos
+
+	
 
 
  ?>

@@ -1,76 +1,41 @@
-function enterLogin(e) {
+const formLogin = document.getElementById('formLogin');
+const alerta = document.getElementById('alerta');
+
+function mostrarAlerta(mensaje) {
+    alerta.textContent = mensaje;
+    alerta.classList.remove('d-none');
+}
+
+async function enterLogin(e) {
     e.preventDefault();
-    const strUser = document.getElementById("user");
-    const strPassword = document.getElementById("password");
-    if (strUser.value == "" || strPassword.value == "") {
-        Swal.fire({
-            icon: 'error',
-            showCloseButton: true,
-            title: 'Error!',
-            text: 'El usuario y la contraseña son obligatorios',
-            color: '#716add',
-            timer: '5000',
-            timerProgressBar: 'true',
-            background: '#fffff',
-            backdrop: `
-                      rgba(2,0,106,0.3)                     
-                      left top
-                      no-repeat
-                  `
-        });
+    const user = document.getElementById('user');
+    const password = document.getElementById('password');
 
-    } else {
-        const xhttp = new XMLHttpRequest();
-        const ajaxUrl = baseUrl + '/login/log';
-        const form = document.getElementById("formLogin");
-
-        xhttp.open("POST", ajaxUrl, true);
-        xhttp.send(new FormData(form));
-        console.log(xhttp);
-        xhttp.onreadystatechange = function () {
-            console.log(xhttp);
-            if (xhttp.readyState != 4) return;
-            if (xhttp.status == 200) {
-                const result = JSON.parse(xhttp.responseText);
-                if (result == 1) {
-                    window.location = baseUrl + '/inicio';
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        showCloseButton: true,
-                        title: 'Error!',
-                        text: 'El usuario o la contraseña son incorrectos',
-                        color: '#716add',
-                        timer: '5000',
-                        timerProgressBar: 'true',
-                        background: '#fffff',
-                        backdrop: `
-            rgba(2,0,106,0.3)                     
-left top
-no-repeat
-`
-                    });
-
-                    document.querySelector('#password').value = "";
-                }
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    showCloseButton: true,
-                    title: 'Error!',
-                    text: 'El usuario o la contraseña son incorrectos',
-                    color: '#716add',
-                    timer: '5000',
-                    timerProgressBar: 'true',
-                    background: '#fffff',
-                    backdrop: `
-                                          rgba(2,0,106,0.3)                     
-                                          left top
-                                          no-repeat
-                                      `
-                });
-                document.querySelector('#password').value = "";
-            }
-        }
+    if (user.value.trim() === '' || password.value === '') {
+        mostrarAlerta('Escribe tu usuario y tu contraseña.');
+        return;
     }
+
+    // Se desactiva el botón para que no se envíe dos veces
+    const boton = formLogin.querySelector('button[type="submit"]');
+    boton.disabled = true;
+
+    try {
+        const respuesta = await fetch(baseUrl + '/login/log', {
+            method: 'POST',
+            body: new FormData(formLogin)
+        });
+        const result = await respuesta.json();
+
+        if (result.status) {
+            window.location = baseUrl + '/inicio';
+            return;
+        }
+        mostrarAlerta(result.msg);
+        password.value = '';
+        password.focus();
+    } catch (error) {
+        mostrarAlerta('No se pudo conectar con el servidor. Inténtalo de nuevo.');
+    }
+    boton.disabled = false;
 }
