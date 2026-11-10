@@ -100,34 +100,14 @@ class VentasModel extends Mysql
                     LEFT JOIN detalle_venta dv ON v.id_venta = dv.venta_id
                     LEFT JOIN menu m ON dv.menu_id = m.id_menu
                     LEFT JOIN usuario u ON v.usuario_id = u.id
-                    WHERE t.id_ticket = " . (int)$ticket_id;
+                    WHERE t.id_ticket = ?";
 
             // Ejecutar la consulta y obtener todos los registros
-            $request = $this->select_all($sql);
+            $request = $this->select_all($sql, [(int)$ticket_id]);
 
             return $request;
         } else {
             return null;
         }
-    }
-
-
-
-
-
-
-
-
-
-    public function getDetalleVentaByTicket($ticket_id)
-    {
-        // Consultar los detalles de la venta por el ticket
-        $sql = "SELECT p.nombre_menu AS nombre_producto, dv.cantidad, dv.subtotal 
-            FROM detalle_venta dv
-            JOIN menu p ON dv.menu_id = p.id_menu
-            WHERE dv.venta_id = (SELECT venta_id FROM ticket WHERE id_ticket = ?)";
-        $arrData = array($ticket_id);
-        $request = $this->select_all($sql, $arrData);
-        return $request;
     }
 }

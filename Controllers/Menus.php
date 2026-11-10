@@ -6,9 +6,7 @@ class Menus extends Controllers
 
 	public function __construct()
 	{
-
 		parent::__construct();
-		
 	}
 
 	public function menus()
@@ -43,7 +41,6 @@ class Menus extends Controllers
 		die();
 	}
 
-
 	public function getMenu($id_menu)
 	{
 		$id_menu = intval($id_menu);
@@ -58,26 +55,6 @@ class Menus extends Controllers
 		}
 		die();
 	}
-
-
-
-	public function getProductosDisponibles()
-	{
-
-		$arrData = $this->model->selectProductosDisponibles();
-		echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
-
-		die();
-	}
-	public function getProductosAgotados()
-	{
-
-		$arrData = $this->model->selectProductosAgotados();
-		echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
-
-		die();
-	}
-
 
 	public function registrarMenu()
 	{
@@ -106,7 +83,7 @@ class Menus extends Controllers
 			$floatPrecioMenu,
 			$intCategoriaId,
 			$strDetalleMenu,
-			$img_menu // Ahora contiene la imagen correcta
+			$img_menu
 		);
 
 		if ($request_menu > 0) {
@@ -166,7 +143,6 @@ class Menus extends Controllers
 		die();
 	}
 
-
 	public function deleteMenu()
 	{
 		$this->esAdmin();
@@ -180,29 +156,6 @@ class Menus extends Controllers
 			}
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 		}
-		die();
-	}
-
-
-
-	public function obtenerPrecioProducto($id_producto)
-	{
-		$idProducto = intval($id_producto);
-
-		if ($idProducto > 0) {
-			$arrData = $this->model->getSelectProductoPrecio($idProducto);
-
-			if (empty($arrData)) {
-				$arrResponse = array('status' => false, 'msg' => 'Datos no encontrados.');
-			} else {
-				$arrResponse = array('status' => true, 'data' => $arrData);
-			}
-		} else {
-			$arrResponse = array('status' => false, 'msg' => 'ID de producto no válido.');
-		}
-
-		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
-		// Considera alternativas a die(), dependiendo de la estructura de tu aplicación.
 		die();
 	}
 }
