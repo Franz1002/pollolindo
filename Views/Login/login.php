@@ -35,7 +35,8 @@
       </div>
 
       <!-- Login Form -->
-      <form id="formLogin" name="formLogin" action="">
+
+      <form id="formLogin" name="formLogin" action="" method="post">
         <input type="hidden" name="csrf_token" value="<?= csrfToken(); ?>">
         <div class="form-group">
           <label for="user">Usuario</label>

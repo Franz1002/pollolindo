@@ -1,6 +1,12 @@
 const formLogin = document.getElementById('formLogin');
 const alerta = document.getElementById('alerta');
 
+// Esta pantalla solo se ve cuando no hay sesión iniciada: se avisa a las otras pestañas para que también salgan
+try {
+    const motivo = window.location.search.indexOf('expirada') !== -1 ? 'expirada' : 'salida';
+    localStorage.setItem('chickenlindo_sin_sesion', motivo + ':' + Date.now());
+} catch (e) { }
+
 function mostrarAlerta(mensaje) {
     alerta.textContent = mensaje;
     alerta.classList.remove('d-none');

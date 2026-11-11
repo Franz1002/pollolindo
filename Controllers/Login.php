@@ -72,9 +72,12 @@ class Login extends Controllers
 
     public function logout()
     {
-        $_SESSION = [];
-        session_destroy();
-        setcookie(session_name(), '', ['expires' => time() - 3600, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+        // Si no hay sesión iniciada no hay nada que cerrar (por ejemplo, otra pestaña ya la cerró)
+        if (!empty($_SESSION['login'])) {
+            $_SESSION = [];
+            session_destroy();
+            setcookie(session_name(), '', ['expires' => time() - 3600, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+        }
 
         $destino = isset($_GET['expirada']) ? '/login?expirada=1' : '/login';
         header('Location: ' . base_url() . $destino);
