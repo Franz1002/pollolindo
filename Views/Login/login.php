@@ -36,6 +36,7 @@
 
       <!-- Login Form -->
       <form id="formLogin" name="formLogin" action="">
+        <input type="hidden" name="csrf_token" value="<?= csrfToken(); ?>">
         <div class="form-group">
           <label for="user">Usuario</label>
           <input type="text" id="user" name="user" placeholder="Tu usuario del sistema" autocomplete="username">

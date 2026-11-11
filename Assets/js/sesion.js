@@ -3,22 +3,67 @@
     const urlSalida = base_url + '/login/logout?expirada=1';
     const fetchOriginal = window.fetch.bind(window);
 
-    // 1) Si el servidor responde 401 (la sesión ya terminó), se vuelve al login
-    window.fetch = function () {
-        return fetchOriginal.apply(null, arguments).then(function (respuesta) {
+    // Si el token ya no sirve (por ejemplo, entraste de nuevo en otra pestaña), se recarga la pantalla
+    function tokenVencido() {
+        if (window.Swal) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'La página se desactualizó',
+                text: 'Se va a recargar. Vuelve a hacer lo que estabas haciendo.'
+            }).then(function () { window.location.reload(); });
+        } else {
+            window.location.reload();
+        }
+    }
+
+    // 1) Todo fetch que no sea GET lleva el token CSRF.
+    //    Si el servidor responde 401 (la sesión terminó) se vuelve al login
+    window.fetch = function (recurso, opciones) {
+        opciones = opciones || {};
+        const metodo = (opciones.method || 'GET').toUpperCase();
+        if (metodo !== 'GET' && metodo !== 'HEAD') {
+            const cabeceras = new Headers(opciones.headers || {});
+            cabeceras.set('X-CSRF-Token', csrf_token);
+            opciones = Object.assign({}, opciones, { headers: cabeceras });
+        }
+        return fetchOriginal(recurso, opciones).then(function (respuesta) {
             if (respuesta.status === 401) {
                 window.location.href = urlSalida;
+            } else if (respuesta.status === 403 && respuesta.headers.get('X-CSRF-Invalido')) {
+                tokenVencido();
             }
             return respuesta;
         });
     };
-    if (window.jQuery) {
-        jQuery(document).ajaxError(function (evento, xhr) {
+
+    // Lo mismo para las peticiones de jQuery (por ejemplo, las tablas DataTables).
+    // Se engancha otra vez cuando terminan de cargar los scripts, porque DataTables trae su propio jQuery
+    function engancharJquery() {
+        const $j = window.jQuery;
+        if (!$j || $j.sesionEnganchada) {
+            return;
+        }
+        $j.sesionEnganchada = true;
+        // El token solo acompaña a las peticiones que cambian datos en este mismo sistema.
+        // Nunca viaja a otros sitios (por ejemplo, al servidor de donde DataTables baja el idioma)
+        $j.ajaxPrefilter(function (opciones, originales, xhr) {
+            const metodo = (opciones.type || 'GET').toUpperCase();
+            if (!opciones.crossDomain && metodo !== 'GET' && metodo !== 'HEAD') {
+                xhr.setRequestHeader('X-CSRF-Token', csrf_token);
+            }
+        });
+
+
+        $j(document).ajaxError(function (evento, xhr) {
             if (xhr.status === 401) {
                 window.location.href = urlSalida;
+            } else if (xhr.status === 403 && xhr.getResponseHeader('X-CSRF-Invalido')) {
+                tokenVencido();
             }
         });
     }
+    engancharJquery();
+    document.addEventListener('DOMContentLoaded', engancharJquery);
 
     // 2) Mientras alguien usa la pantalla, se avisa al servidor cada 5 minutos como mucho
     const cincoMinutos = 5 * 60 * 1000;

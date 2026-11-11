@@ -116,6 +116,16 @@
     // Devuelve el contenido modificado
     return $contenidoModificado;
 }
+
+
+    // Token contra CSRF: uno por sesión. Va en cada formulario y en cada petición POST
+    function csrfToken()
+    {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
     
 
  ?>

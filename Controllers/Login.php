@@ -49,11 +49,18 @@ class Login extends Controllers
 
         // Identificador de sesión nuevo al entrar: así no sirve uno que alguien haya copiado antes
         session_regenerate_id(true);
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         $_SESSION['login'] = true;
         $_SESSION['idUsuario'] = $this->model->sessionLogin((int)$requestUser['id']);
         $_SESSION['ultima_actividad'] = time();
 
         $this->responder(true, 'Bienvenido.');
+    }
+    // Entrega un token nuevo a la pantalla de login cuando el suyo ya venció
+    public function token()
+    {
+        echo json_encode(['token' => csrfToken()]);
+        die();
     }
 
     // El navegador lo llama mientras se usa el sistema, para que la sesión no se cierre

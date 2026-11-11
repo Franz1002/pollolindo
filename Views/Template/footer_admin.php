@@ -1,6 +1,7 @@
 <script>
   const base_url = "<?= base_url(); ?>";
   const minutos_inactividad = <?= MINUTOS_INACTIVIDAD; ?>;
+  const csrf_token = "<?= csrfToken(); ?>";
 </script>
 
 <!-- Incluir jQuery (Debe ir antes que Bootstrap y Bootstrap Select) -->

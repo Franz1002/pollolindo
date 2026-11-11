@@ -6,6 +6,15 @@ function mostrarAlerta(mensaje) {
     alerta.classList.remove('d-none');
 }
 
+function enviarLogin() {
+    return fetch(baseUrl + '/login/log', {
+        method: 'POST',
+        // Le avisa al servidor que la petición viene de JavaScript, para que responda en JSON
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: new FormData(formLogin)
+    });
+}
+
 async function enterLogin(e) {
     e.preventDefault();
     const user = document.getElementById('user');
@@ -21,12 +30,17 @@ async function enterLogin(e) {
     boton.disabled = true;
 
     try {
-        const respuesta = await fetch(baseUrl + '/login/log', {
-            method: 'POST',
-            body: new FormData(formLogin)
-        });
-        const result = await respuesta.json();
+        let respuesta = await enviarLogin();
 
+        // Si esta pantalla llevaba mucho tiempo abierta, su token ya venció:
+        // se pide uno nuevo y se envía otra vez, sin molestar a quien está entrando
+        if (respuesta.status === 403) {
+            const nuevo = await (await fetch(baseUrl + '/login/token')).json();
+            formLogin.querySelector('input[name="csrf_token"]').value = nuevo.token;
+            respuesta = await enviarLogin();
+        }
+
+        const result = await respuesta.json();
         if (result.status) {
             window.location = baseUrl + '/inicio';
             return;

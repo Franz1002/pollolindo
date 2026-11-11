@@ -6,6 +6,8 @@ require_once("Helpers/Helpers.php");
 if (session_status() === PHP_SESSION_NONE) {
 	ini_set('session.use_strict_mode', '1');
 	ini_set('session.use_only_cookies', '1');
+	// PHP borra las sesiones viejas a los 24 min; las mantenemos un poco más que el límite de inactividad
+	ini_set('session.gc_maxlifetime', (string)(MINUTOS_INACTIVIDAD * 60 + 600));
 	session_name('CHICKENLINDO');
 	session_set_cookie_params([
 		'lifetime' => 0,

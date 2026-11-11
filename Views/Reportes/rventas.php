@@ -16,6 +16,7 @@
         <div class="row">
           <div class="form-group col-md-12">
             <form action="<?php echo BASE_URL; ?>/Reportes/reporteArqueoActual" method="POST" target="_blank" class="col-md-6">
+              <input type="hidden" name="csrf_token" value="<?= csrfToken(); ?>">
               <div class="form-row form-default">
                 <div class="form-group col-md-6">
                   <label class="float-label control-label" style="font-size: 17px;">Informe de arqueo actual</label>
@@ -27,6 +28,7 @@
             </form>
 
             <form action="<?php echo BASE_URL; ?>/Reportes/reporteArqueoMensual" method="POST" target="_blank" class="col-md-12">
+              <input type="hidden" name="csrf_token" value="<?= csrfToken(); ?>">
               <div class="form-row form-default">
                 <div class="form-group col-md-4">
                   <label class="float-label control-label" style="font-size: 17px;">Desde:</label>
@@ -46,7 +48,7 @@
         </div>
 
 
-      
+
 
       </div>
     </div>
