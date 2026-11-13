@@ -27,6 +27,8 @@
 
 <!-- DataTables -->
 <script src="<?= base_url_template(); ?>/assets/DataTables/datatables.min.js"></script>
+<!-- Textos en español de las tablas (archivo local, sin internet) -->
+<script src="<?= media(); ?>/js/datatables-es.js"></script>
 
 <!-- Funciones JS de la página -->
 <script src="<?= media(); ?>/js/<?= $data['page_functions_js']; ?>"></script>

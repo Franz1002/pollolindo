@@ -4,9 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
     tableInsumos = $('#tableInsumos').dataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "language": {
-            "url": "https://cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json"
-        },
         "ajax": {
             "url": base_url + "/Insumos/getInsumos",
             "dataSrc": "",

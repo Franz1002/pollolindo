@@ -4,9 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
     tableCategorias = $('#tableCategorias').dataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "language": {
-            "url": "https://cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json" // Ruta completa al archivo JSON
-        },
         "ajax": {
             "url": base_url + "/Categorias/getCategorias",
             "dataSrc": "",
