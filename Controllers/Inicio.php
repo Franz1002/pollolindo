@@ -11,6 +11,12 @@ class Inicio extends Controllers
 
     public function inicio()
     {
+        // El panel muestra las ventas del día: solo lo ve el admin. El cajero va directo a vender
+        if (empty($_SESSION['idUsuario']['tipo']) || $_SESSION['idUsuario']['tipo'] != 1) {
+            header('Location: ' . base_url() . '/ventas');
+            exit;
+        }
+
         $data['title'] = "Inicio";
         $data['page_functions_js'] = "functions_inicio.js";
 

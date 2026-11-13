@@ -1,158 +1,84 @@
+<?php
+// Menú lateral según el rol: el cajero solo ve lo que usa; el admin ve todo, por grupos
+$esAdminMenu = !empty($_SESSION['idUsuario']['tipo']) && $_SESSION['idUsuario']['tipo'] == 1;
+
+if ($esAdminMenu) {
+  $gruposMenu = [
+    'Día a día' => [
+      ['Inicio', '/inicio', 'mdi-view-dashboard'],
+      ['Vender', '/ventas', 'mdi-cart'],
+      ['Caja', '/caja', 'mdi-cash-register'],
+      ['Tickets', '/tickets', 'mdi-printer'],
+    ],
+    'Inventario' => [
+      ['Insumos', '/insumos', 'mdi-food-variant'],
+      ['Compras', '/compras', 'mdi-truck-delivery'],
+      ['Recetas', '/recetas', 'mdi-book-open-variant'],
+      ['Stock', '/inventario', 'mdi-package-variant'],
+    ],
+    'Carta' => [
+      ['Productos', '/menus', 'mdi-silverware-variant'],
+      ['Categorías', '/categorias', 'mdi-tag-multiple'],
+    ],
+    'Control' => [
+      ['Reportes', '/reportes/rventas', 'mdi-poll'],
+    ],
+    'Administración' => [
+      ['Usuarios', '/usuarios', 'mdi-account-multiple'],
+    ],
+  ];
+} else {
+  $gruposMenu = [
+    'Día a día' => [
+      ['Vender', '/ventas', 'mdi-cart'],
+      ['Caja', '/caja', 'mdi-cash-register'],
+    ],
+  ];
+}
+?>
+<?php foreach ($gruposMenu as $tituloGrupo => $enlaces) { ?>
 <li class="nav-item nav-category">
-  <span class="nav-link">Navigation</span>
+  <span class="nav-link"><?= $tituloGrupo; ?></span>
 </li>
+<?php foreach ($enlaces as $enlace) { ?>
 <li class="nav-item menu-items">
-  <a class="nav-link" href="<?= base_url(); ?>/inicio">
+  <a class="nav-link" href="<?= base_url() . $enlace[1]; ?>">
     <span class="menu-icon">
-      <i class=" mdi mdi-view-dashboard "></i>
+      <i class="mdi <?= $enlace[2]; ?>"></i>
     </span>
-    <span class="menu-title">Dashboard</span>
+    <span class="menu-title"><?= $enlace[0]; ?></span>
   </a>
 </li>
-<li class="nav-item menu-items">
-  <a class="nav-link" href="<?= base_url(); ?>/usuarios">
-    <span class="menu-icon">
-      <i class="mdi mdi-account"></i>
-    </span>
-    <span class="menu-title">Usuarios</span>
-  </a>
-</li>
-<li class="nav-item menu-items">
-  <a class="nav-link" href="<?= base_url(); ?>/categorias">
-    <span class="menu-icon">
-      <i class="mdi mdi-speedometer"></i>
-    </span>
-    <span class="menu-title">Categorias</span>
-  </a>
-</li>
-<li class="nav-item menu-items">
-  <a class="nav-link" href="<?= base_url(); ?>/menus">
-    <span class="menu-icon">
-      <i class="mdi mdi-silverware-variant"></i>
-    </span>
-    <span class="menu-title">Menu</span>
-  </a>
-</li>
-<li class="nav-item menu-items">
-  <a class="nav-link" href="<?= base_url(); ?>/inventario">
-    <span class="menu-icon">
-      <i class="mdi mdi-calendar-text"></i>
-    </span>
-    <span class="menu-title">Inventario</span>
-  </a>
-</li>
-<li class="nav-item menu-items">
-  <a class="nav-link" href="<?= base_url(); ?>/insumos">
-    <span class="menu-icon">
-      <i class="mdi mdi-food-drumstick"></i>
-    </span>
-    <span class="menu-title">Insumos</span>
-  </a>
-</li>
-<li class="nav-item menu-items">
-  <a class="nav-link" href="<?= base_url(); ?>/recetas">
-    <span class="menu-icon">
-      <i class="mdi mdi-book-open-variant"></i>
-    </span>
-    <span class="menu-title">Recetas</span>
-  </a>
-</li>
+<?php } ?>
+<?php } ?>
 
-
-<style>
-  .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    /* Color de fondo sutil */
-    box-shadow: inset 7px 3px 0 0 #ffffff;
-    /* Línea izquierda como indicador */
-    border-radius: 5px;
-    /* Bordes redondeados */
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
-    /* Sombra oscura en las letras */
-    font-weight: bold;
-    /* Hace que la letra se vea más gruesa */
-  }
-</style>
-
-<li class="nav-item menu-items">
-  <a class="nav-link" data-toggle="collapse" data-target="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-    <span class="menu-icon">
-      <i class="mdi mdi-format-list-bulleted"></i>
-    </span>
-    <span class="menu-title">Compras y ventas</span>
-    <i class="menu-arrow"></i>
-  </a>
-  <div class="collapse" id="ui-basic">
-    <ul class="nav flex-column sub-menu">
-      <li class="nav-item">
-        <a class="nav-link" href="<?= base_url(); ?>/compras" id="link-compras">
-          <span class="menu-icon">
-            <i class="mdi mdi-square-inc-cash"></i>
-          </span> Registrar compra
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="<?= base_url(); ?>/ventas" id="link-ventas">
-          <span class="menu-icon">
-            <i class="mdi mdi-square-inc-cash" style="color:darkgoldenrod;"></i>
-          </span> Registrar venta
-        </a>
-      </li>
-    </ul>
-  </div>
+<li class="nav-item nav-category">
+  <span class="nav-link">Sesión</span>
 </li>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    let currentUrl = window.location.pathname;
-
-    // Mantiene abierto el menú si estamos en compras o ventas
-    if (currentUrl.includes("/compras") || currentUrl.includes("/ventas")) {
-      document.getElementById("ui-basic").classList.add("show");
-    }
-
-    // Aplica la clase 'active' al enlace correspondiente
-    if (currentUrl.includes("/compras")) {
-      document.getElementById("link-compras").classList.add("active");
-    } else if (currentUrl.includes("/ventas")) {
-      document.getElementById("link-ventas").classList.add("active");
-    }
-  });
-</script>
-
-<li class="nav-item menu-items">
-  <a class="nav-link" href="<?= base_url(); ?>/tickets">
-    <span class="menu-icon">
-      <i class="mdi mdi-printer" style="color:hotpink;"></i>
-    </span>
-    <span class="menu-title">Tickets</span>
-  </a>
-</li>
-<li class="nav-item menu-items">
-  <a class="nav-link" href="<?= base_url(); ?>/caja">
-    <span class="menu-icon">
-      <i class="mdi mdi-cash-register"></i>
-    </span>
-    <span class="menu-title">Caja</span>
-  </a>
-</li>
-<li class="nav-item menu-items">
-  <a class="nav-link" href=" <?= base_url(); ?>/reportes/rventas">
-    <span class="menu-icon">
-      <i class="mdi mdi-poll"></i>
-    </span>
-    <span class="menu-title">Reporte de ventas</span>
-  </a>
-</li>
-
 <li class="nav-item menu-items">
   <a class="nav-link" href="<?= base_url(); ?>/login/logout">
     <span class="menu-icon">
-      <i class="mdi mdi-logout-variant "></i>
+      <i class="mdi mdi-logout-variant"></i>
     </span>
     <span class="menu-title">Cerrar sesión</span>
   </a>
 </li>
+
+<script>
+  // Marca solo la opción de la pantalla actual. La plantilla compara por "contiene",
+  // y por eso en Vender (/ventas) también marcaba Reportes (/reportes/rventas)
+  window.addEventListener("load", function () {
+    var limpiar = function (ruta) { return ruta.replace(/\/+$/, "").toLowerCase(); };
+    var actual = limpiar(window.location.pathname);
+
+    document.querySelectorAll("#sidebar .menu-items > .nav-link").forEach(function (enlace) {
+      var ruta = limpiar(enlace.pathname);
+      var esActual = actual === ruta || actual.indexOf(ruta + "/") === 0;
+      enlace.classList.toggle("active", esActual);
+      enlace.parentElement.classList.toggle("active", esActual);
+    });
+  });
+</script>
 </ul>
 </nav>
 <!-- partial -->
