@@ -10,10 +10,8 @@
 
 
 
-  <!-- Tipografías del sistema de diseño -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Tipografías del sistema de diseño (locales, sin internet) -->
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>/Assets/css/fonts.css">
 
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>/Assets/css/tokens.css">
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>/Assets/css/login.css">
