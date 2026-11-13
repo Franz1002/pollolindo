@@ -4,8 +4,11 @@
   const csrf_token = "<?= csrfToken(); ?>";
 </script>
 
-<!-- Incluir jQuery (Debe ir antes que Bootstrap y Bootstrap Select) -->
-<script src="<?= base_url(); ?>/Assets/js/librerias/jquery-3.6.0.min.js"></script>
+<!-- jQuery y DataTables vienen en un solo archivo: es el único jQuery del sistema
+     y debe ir antes que sesion.js, Bootstrap y Bootstrap Select -->
+<script src="<?= base_url_template(); ?>/assets/DataTables/datatables.min.js"></script>
+<!-- Textos en español de las tablas (archivo local, sin internet) -->
+<script src="<?= media(); ?>/js/datatables-es.js"></script>
 
 <!-- Cierre de sesión por inactividad -->
 <script src="<?= media(); ?>/js/sesion.js"></script>
@@ -24,11 +27,6 @@
 
 <script src="<?= base_url_template(); ?>/assets/js/settings.js"></script>
 <script src="<?= base_url_template(); ?>/assets/js/todolist.js"></script>
-
-<!-- DataTables -->
-<script src="<?= base_url_template(); ?>/assets/DataTables/datatables.min.js"></script>
-<!-- Textos en español de las tablas (archivo local, sin internet) -->
-<script src="<?= media(); ?>/js/datatables-es.js"></script>
 
 <!-- Funciones JS de la página -->
 <script src="<?= media(); ?>/js/<?= $data['page_functions_js']; ?>"></script>
