@@ -84,8 +84,19 @@
     font-size:0.95rem;
     line-height:1.2;
     color:var(--hueso);
-    padding-right:26px;
   }
+  .vn-prod.en-pedido .vn-prod-nombre{ padding-right:28px; }
+  .vn-grupo{
+    grid-column:1 / -1;
+    margin:6px 0 0;
+    font-family:var(--font-mono);
+    font-size:0.72rem;
+    font-weight:500;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--hueso-opaco);
+  }
+  .vn-grupo:first-child{ margin-top:0; }
   .vn-prod-precio{ font-family:var(--font-mono); font-size:0.9rem; color:var(--brasa-viva); }
   .vn-prod-cant{
     position:absolute;
@@ -216,8 +227,10 @@
     color:var(--hueso-tenue);
   }
   .vn-fila b{ font-family:var(--font-mono); font-weight:500; color:var(--hueso); }
-  .vn-total b{ font-size:1.7rem; font-weight:600; color:var(--brasa-viva); }
-  .vn-total span{ font-size:0.95rem; color:var(--hueso); }
+  /* El número del total es lo más grande del panel; "Bs" va pequeño a su lado */
+  .vn-total > span{ font-size:0.95rem; color:var(--hueso); }
+  .vn-total b{ font-size:0.95rem; color:var(--hueso-tenue); }
+  .vn-total b span{ font-size:1.9rem; font-weight:600; color:var(--brasa-viva); }
 
   .vn-par{ display:grid; grid-template-columns:1fr 1fr; gap:8px; align-items:end; }
   .vn-par.mixto{ grid-template-columns:1fr 1fr 1fr; }

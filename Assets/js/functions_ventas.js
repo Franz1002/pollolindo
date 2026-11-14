@@ -90,7 +90,17 @@
       grilla.appendChild(vacio);
       return;
     }
+    // En "Todos" los productos van agrupados bajo el nombre de su categoría
+    const agrupar = estado.categoria === 'todas' && !el('vn-buscar').value.trim();
+    let grupoActual = null;
     visibles.forEach((p) => {
+      if (agrupar && p.categoriaId !== grupoActual) {
+        grupoActual = p.categoriaId;
+        const titulo = document.createElement('h3');
+        titulo.className = 'vn-grupo';
+        titulo.textContent = p.categoria;
+        grilla.appendChild(titulo);
+      }
       const cantidad = pedido.get(p.id) || 0;
       const boton = document.createElement('button');
       boton.type = 'button';

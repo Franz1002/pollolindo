@@ -170,3 +170,10 @@ footer.footer{
 }
 /* La plantilla dejaba 60 px vacíos bajo el menú y la página quedaba con una barra de desplazamiento */
 .sidebar > .nav{ margin-bottom:0 !important; }
+
+/* Opción activa del menú: la plantilla le ponía una barra azul y forma de píldora */
+.sidebar .nav .nav-item .nav-link{ border-radius:0 var(--radius) var(--radius) 0 !important; }
+.sidebar .nav .nav-item .nav-link:before{ display:none !important; }
+/* La marca es un enlace, pero no se subraya */
+.sidebar .sidebar-brand-wrapper .sidebar-brand,
+.sidebar .sidebar-brand-wrapper .sidebar-brand:hover{ text-decoration:none !important; }
