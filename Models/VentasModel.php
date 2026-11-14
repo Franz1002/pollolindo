@@ -6,24 +6,6 @@ class VentasModel extends Mysql
         parent::__construct();
     }
 
-    public function selectMenu()
-    {
-        $sql = "SELECT * FROM menu WHERE categoria_id = 1 AND estado = 1";
-        return $this->select_all($sql);
-    }
-
-    public function selectBebida()
-    {
-        $sql = "SELECT * FROM menu WHERE categoria_id = 2 AND estado = 1";
-        return $this->select_all($sql);
-    }
-
-    public function selectCombo()
-    {
-        $sql = "SELECT * FROM menu WHERE categoria_id = 3 AND estado = 1";
-        return $this->select_all($sql);
-    }
-
     // Productos activos con su categoría, para armar la pantalla Vender
     public function selectCatalogo()
     {
@@ -96,58 +78,6 @@ class VentasModel extends Mysql
         });
     }
 
-    public function insertarVenta($usuarioId,  $totalVenta)
-    {
-        // Preparar la consulta SQL para insertar una venta en la tabla 'venta'
-        $sql = "INSERT INTO venta (usuario_id, fecha_venta, total_venta) VALUES (?, NOW(), ?)";
-
-        // Ejecutar la consulta utilizando el método 'query' de la clase 'Modelo'
-        $arrData = array($usuarioId, $totalVenta);
-
-        // Retornar el resultado de la consulta (id de la venta registrada)
-        $request = $this->insert($sql, $arrData);
-        return $request;
-    }
-    public function insertarDetalleVenta($ventaId, $menuId, $cantidad, $subtotal)
-    {
-        // Preparar la consulta SQL para insertar el detalle de la venta
-        $sql = "INSERT INTO detalle_venta (venta_id, menu_id, cantidad, subtotal) VALUES (?, ?, ?, ?)";
-
-        // Ejecutar la consulta utilizando el método 'insert' de la clase Modelo
-        $arrData = array($ventaId, $menuId, $cantidad, $subtotal);
-
-        // Retornar el resultado de la consulta (verifica si se insertó correctamente)
-        $request = $this->insert($sql, $arrData);
-        return $request;
-    }
-
-
-    public function insertarTicket($venta_id, $cliente_id, $numero_pedido, $emitido_por, $descuento, $total, $efectivo_recibido, $cambio)
-    {
-        $sql = "INSERT INTO ticket (venta_id, cliente_id, fecha_emision, numero_pedido, emitido_por, descuento, total, efectivo_recibido, cambio) 
-            VALUES (?, ?, NOW(), ?, ?, ?, ?, ?, ?)";
-
-        // Si cliente_id es null, pásalo como NULL en lugar de 0
-        $arrData = array($venta_id, $cliente_id ?? null, $numero_pedido, $emitido_por, $descuento, $total, $efectivo_recibido, $cambio);
-
-        // Ejecutar la consulta de inserción
-        $request = $this->insert($sql, $arrData);
-
-        // Retornar el resultado de la consulta (ID del ticket insertado)
-        return $request;
-    }
-
-
-    public function obtenerNumPedido()
-    {
-        $sql = "SELECT COALESCE(MAX(numero_pedido), 0) + 1 AS nuevo_numero 
-                FROM ticket 
-                WHERE DATE(fecha_emision) = CURDATE()";
-
-        $request = $this->select($sql);
-
-        return $request ? $request['nuevo_numero'] : 1; // Asegurar que siempre retorne un número
-    }
     public function getTicketById($ticket_id)
     {
         if (is_numeric($ticket_id)) {

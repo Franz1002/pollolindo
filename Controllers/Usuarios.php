@@ -30,11 +30,6 @@ class Usuarios extends Controllers
 		die();
 	}
 
-	public function getUsuarioId()
-	{
-		echo json_encode(['usuario_id' => isset($_SESSION['idUsuario']) ? $_SESSION['idUsuario'] : null]);
-	}
-
 	public function getUsuario($id)
 	{
 		$this->esAdmin();
