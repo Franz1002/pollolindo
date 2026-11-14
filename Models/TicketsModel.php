@@ -7,42 +7,33 @@ class TicketsModel extends Mysql
         parent::__construct();
     }
 
-    public function selectTickets()
+    // Una fila por ticket emitido entre dos fechas (la fecha final no se incluye).
+    // Los productos van resumidos en una sola columna para que el ticket no se repita,
+    // y los LEFT JOIN dejan pasar las ventas sin cliente.
+    public function selectTickets(string $desde, string $hastaExclusivo)
     {
         $sql = "SELECT
-    t.id_ticket,
-    t.fecha_emision,
-    t.numero_pedido,
-    t.emitido_por,
-    t.descuento,
-    v.id_venta,
-    v.fecha_venta,
-    v.total_venta,
-    c.id_cliente,
-    c.nombre_cliente,   
-    c.celular_cliente,
-    u.id AS usuario_id,
-    CONCAT(u.nombre, ' ', u.apellido) AS nombre_usuario_completo,  -- Combina nombre y apellido
-    u.email AS email_usuario,
-    u.cedula AS cedula_usuario,
-    u.celular AS celular_usuario,
-    dv.id_detalle,
-    dv.cantidad,
-    dv.subtotal,
-    m.id_menu,
-    m.nombre_menu,
-    m.precio_menu,
-    m.detalle_menu,
-    m.img_menu,
-    m.estado AS estado_menu
-FROM ticket t
-JOIN venta v ON t.venta_id = v.id_venta
-JOIN cliente c ON t.cliente_id = c.id_cliente
-JOIN usuario u ON t.emitido_por = u.id
-JOIN detalle_venta dv ON v.id_venta = dv.venta_id
-JOIN menu m ON dv.menu_id = m.id_menu;
-";
-        $request = $this->select_all($sql);
-        return $request;
+                    t.id_ticket,
+                    t.numero_pedido,
+                    t.fecha_emision,
+                    t.descuento,
+                    t.total,
+                    v.tipo_pedido,
+                    v.mesa,
+                    v.nota_pedido,
+                    v.metodo_pago,
+                    c.nombre_cliente,
+                    CONCAT(u.nombre, ' ', u.apellido) AS cajero,
+                    (SELECT GROUP_CONCAT(CONCAT(dv.cantidad, ' x ', m.nombre_menu) ORDER BY dv.id_detalle SEPARATOR ', ')
+                       FROM detalle_venta dv
+                       INNER JOIN menu m ON m.id_menu = dv.menu_id
+                      WHERE dv.venta_id = t.venta_id) AS productos
+                FROM ticket t
+                LEFT JOIN venta v ON v.id_venta = t.venta_id
+                LEFT JOIN cliente c ON c.id_cliente = t.cliente_id
+                LEFT JOIN usuario u ON u.id = t.emitido_por
+                WHERE t.fecha_emision >= ? AND t.fecha_emision < ?
+                ORDER BY t.fecha_emision DESC, t.id_ticket DESC";
+        return $this->select_all($sql, [$desde, $hastaExclusivo]);
     }
 }

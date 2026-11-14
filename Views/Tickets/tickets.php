@@ -1,29 +1,38 @@
-<?php headerAdmin($data);
-getModal('modalUsuarios', $data); ?>
+<?php headerAdmin($data); ?>
 
-
-<title>
-  <?= $data['title']; ?>
-</title>
-
-<!-- partial -->
 <div class="main-panel">
   <div class="content-wrapper">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title text-center">LISTA DE TICKETS</h4>
+        <h4 class="card-title">Tickets</h4>
+
+        <!-- Filtro por fechas: por defecto, los tickets de hoy -->
+        <div class="d-flex flex-wrap align-items-end mb-3" style="gap: 12px;">
+          <div class="form-group mb-0">
+            <label for="tk-desde">Desde</label>
+            <input type="date" class="form-control" id="tk-desde" value="<?= $data['hoy']; ?>" max="<?= $data['hoy']; ?>">
+          </div>
+          <div class="form-group mb-0">
+            <label for="tk-hasta">Hasta</label>
+            <input type="date" class="form-control" id="tk-hasta" value="<?= $data['hoy']; ?>" max="<?= $data['hoy']; ?>">
+          </div>
+          <button type="button" class="btn btn-dark" id="tk-hoy" data-hoy="<?= $data['hoy']; ?>">Hoy</button>
+          <span class="ml-auto" id="tk-resumen" style="font-family: var(--font-mono); color: var(--hueso);"></span>
+        </div>
+        <div class="text-danger mb-2" id="tk-aviso" role="alert"></div>
 
         <div class="table-responsive">
-          <table  id="tableTickets" class="table table-hover">
+          <table id="tableTickets" class="table table-hover" style="width: 100%;">
             <thead>
               <tr>
-                <th>#</th>
                 <th>Pedido</th>
-                <th>Emitido por</th>
-                <th>Fecha emitido</th>
+                <th>Fecha y hora</th>
+                <th>Productos</th>
+                <th>Destino</th>
+                <th>Pago</th>
                 <th>Descuento</th>
-                <th>Total venta</th>             
-                <th>Ticket</th>
+                <th>Total (Bs)</th>
+                <th>Cobrado por</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -33,13 +42,11 @@ getModal('modalUsuarios', $data); ?>
     </div>
   </div>
   <!-- content-wrapper ends -->
-  <!-- partial:<?= base_url_template(); ?>/partials/_footer.html -->
   <footer class="footer">
     <div class="d-sm-flex justify-content-center justify-content-sm-between">
-      <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © Ariel Cori 2025</span>
+      <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Chicken Lindo · Sistema interno</span>
     </div>
   </footer>
-  <!-- partial -->
 </div>
 <!-- main-panel ends -->
 </div>

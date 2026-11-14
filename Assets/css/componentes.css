@@ -394,3 +394,6 @@ select.form-control option, .form-select option{ background:var(--carbon-alto); 
   color:var(--hueso) !important;
 }
 .swal2-timer-progress-bar{ background:var(--brasa-viva) !important; }
+
+/* Campos de fecha: el calendario del navegador en versión oscura */
+input[type="date"].form-control{ color-scheme:dark; }
