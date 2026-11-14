@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content" style="background-color: #13161c;">
             <div class="modal-header headerUpdate custom-background-color">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h5 class="modal-title text-center" id="titleModal">Nueva Categoría</h5>
             </div>
 
@@ -48,7 +48,7 @@
     <div class="modal-dialog modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header custom-background-color" style="background: #337ab7;">
-                <button type="button" class="close custom-close-button" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close custom-close-button" data-dismiss="modal" aria-label="Cerrar">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title text-center text-white" style="font-weight: bold; font-size: 20px;">Detalle de la Categoría</h4>

@@ -13,6 +13,8 @@
 <!-- Cierre de sesión por inactividad -->
 <script src="<?= media(); ?>/js/sesion.js"></script>
 
+<!-- Popper: Bootstrap 4 lo necesita para los menús desplegables -->
+<script src="<?= media(); ?>/js/popper.min.js"></script>
 <!-- Bootstrap JS -->
 <script src="<?= base_url(); ?>/Assets/js/librerias/bootstrap.min.js"></script>
 <!-- Bootstrap Select -->

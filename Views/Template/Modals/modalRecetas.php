@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="background-color: #13161c;">
             <div class="modal-header headerUpdate custom-background-color">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h5 class="modal-title text-center" id="tituloRecetaModal">Receta</h5>
             </div>
 

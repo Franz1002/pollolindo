@@ -1,9 +1,9 @@
-<!-- Modal (Bootstrap 5) -->
+<!-- Modal -->
 <div class="modal fade" id="modalFormUsuario" tabindex="-1" aria-labelledby="modalFormUsuarioLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content" style="background-color: #13161c;">
             <div class="modal-header">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button><br>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h5 class="modal-title text-center" id="modalFormUsuarioLabel">Nuevo Usuario</h5>
             </div>
             <div class="modal-body">
@@ -78,12 +78,12 @@
 </div>
 
 
-<!-- Modal Ver Usuario (Bootstrap 5) -->
+<!-- Modal Ver Usuario -->
 <div class="modal fade" id="modalVerUsuario" tabindex="-1" aria-labelledby="modalVerUsuarioLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header" style="background: #337ab7;">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
                 <h5 class="modal-title text-center text-white" id="modalVerUsuarioLabel" style="font-weight: bold; font-size: 20px;">Detalle del usuario</h5>
             </div>
             <div class="modal-body">

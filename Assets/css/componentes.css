@@ -329,18 +329,22 @@ select.form-control option, .form-select option{ background:var(--carbon-alto); 
 }
 .modal .card .card-text{ color:var(--hueso) !important; font-size:1rem; }
 /* Botón de cerrar */
-.modal .close, .modal .btn-close{
+.modal-header{ display:flex; align-items:center; }
+.modal-header .modal-title{ order:1; flex:1; text-align:left !important; margin:0; }
+.modal .close{
+  order:2;
+  margin:0 0 0 12px !important;
+  padding:0 6px !important;
   color:var(--hueso-tenue) !important;
   background:transparent;
   border:none;
   opacity:1;
   text-shadow:none;
-  font-size:1.5rem;
+  font-size:1.6rem;
   line-height:1;
   cursor:pointer;
 }
-.modal .btn-close::before{ content:"\00d7"; }
-.modal .close:hover, .modal .btn-close:hover{ color:var(--hueso) !important; }
+.modal .close:hover{ color:var(--hueso) !important; }
 .modal-backdrop{ background:#120f0d; }
 
 /* ---------- Avisos ---------- */
