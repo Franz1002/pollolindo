@@ -18,6 +18,9 @@
   --hueso-opaco: #8A7E70;
   --oliva: #6E7C57;
   --oxido: #A23B2E;
+  /* Versiones claras para texto sobre fondo oscuro (se leen mejor) */
+  --oliva-claro: #A9B88F;
+  --oxido-claro: #E08579;
 
   /* Tipografía */
   --font-display: 'Fraunces', serif;

@@ -135,3 +135,36 @@ footer.footer{
   border-top:1px solid var(--carbon-borde);
   color:var(--hueso-opaco) !important;
 }
+
+/* ---------- Ajustes de color que la plantilla seguía pisando ---------- */
+/* Marca del menú lateral y nombre del usuario: la plantilla los dejaba en azul oscuro, casi invisibles */
+.sidebar .sidebar-brand-wrapper .sidebar-brand.marca-sidebar{ color:var(--hueso) !important; }
+.sidebar .sidebar-brand-wrapper .sidebar-brand.marca-sidebar-mini{ color:var(--brasa-viva) !important; }
+.navbar .navbar-profile .navbar-profile-name{
+  color:var(--hueso) !important;
+  font-family:var(--font-body);
+  font-weight:500;
+}
+.navbar .navbar-profile i{ color:var(--hueso-tenue) !important; }
+.navbar .navbar-brand-wrapper{ background:var(--carbon-alto) !important; }
+.navbar .navbar-toggler{ color:var(--hueso-tenue) !important; }
+
+/* ---------- Menú lateral compacto ----------
+   Con los grupos del admin el menú no entraba en una pantalla de 768 px de alto
+   y había que bajar para llegar a "Cerrar sesión" */
+.sidebar .nav .nav-item.nav-category{ padding:10px 19px 2px !important; }
+.sidebar .nav .nav-item.nav-category .nav-link{
+  padding:0 !important;
+  line-height:14px;
+  height:auto !important;
+}
+.sidebar .nav .nav-item.menu-items .nav-link{
+  padding-top:5px !important;
+  padding-bottom:5px !important;
+  height:auto !important;
+}
+.sidebar .nav .nav-item .nav-link .menu-icon{
+  width:26px !important;
+  height:26px !important;
+  background:transparent !important;
+}

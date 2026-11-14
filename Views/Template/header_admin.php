@@ -40,6 +40,7 @@
   <link rel="stylesheet" href="<?= base_url(); ?>/Assets/css/fonts.css">
   <link rel="stylesheet" href="<?= base_url(); ?>/Assets/css/tokens.css">
   <link rel="stylesheet" href="<?= base_url(); ?>/Assets/css/layout.css">
+  <link rel="stylesheet" href="<?= base_url(); ?>/Assets/css/componentes.css">
 
   <link rel="shortcut icon" href="<?= base_url_template(); ?>/assets/images/favicon.png" />
 </head>

@@ -1,0 +1,392 @@
+/* =========================================================
+   COMPONENTES — Chicken Lindo
+   Viste los botones, tablas, formularios, insignias, modales y
+   avisos de Bootstrap y de la plantilla con la paleta de
+   tokens.css, para que todas las pantallas combinen sin tener
+   que cambiar las clases de cada vista.
+   Se carga DESPUÉS de layout.css.
+   ========================================================= */
+
+/* ---------- Texto general ---------- */
+.content-wrapper,
+.content-wrapper p,
+.content-wrapper label{
+  color:var(--hueso);
+  font-family:var(--font-body);
+}
+.content-wrapper h1, .content-wrapper h2, .content-wrapper h3,
+.content-wrapper h4, .content-wrapper h5, .content-wrapper h6{
+  color:var(--hueso);
+}
+.card .card-title{
+  color:var(--hueso) !important;
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:1.25rem;
+  letter-spacing:0.01em;
+  text-transform:none;
+}
+.text-muted{ color:var(--hueso-opaco) !important; }
+.text-danger{ color:var(--oxido-claro) !important; }
+.text-success{ color:var(--oliva-claro) !important; }
+.text-primary, .text-info, .text-warning{ color:var(--brasa-viva) !important; }
+
+.bg-dark{ background-color:var(--carbon-mas-alto) !important; }
+.bg-success{ background-color:var(--oliva) !important; }
+.bg-danger{ background-color:var(--oxido) !important; }
+.bg-warning, .bg-primary, .bg-info{ background-color:var(--brasa) !important; }
+
+/* ---------- Botones ---------- */
+.btn{
+  font-family:var(--font-body);
+  font-weight:600;
+  border-radius:var(--radius) !important;
+  box-shadow:none !important;
+  transition:background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+/* Acción principal: naranja brasa */
+.btn-primary, .btn-warning{
+  background:var(--brasa) !important;
+  border-color:var(--brasa) !important;
+  color:var(--hueso) !important;
+}
+.btn-primary:hover, .btn-primary:focus,
+.btn-warning:hover, .btn-warning:focus{
+  background:var(--brasa-viva) !important;
+  border-color:var(--brasa-viva) !important;
+}
+/* Acción neutra (por ejemplo "Registrar nuevo…") */
+.btn-dark, .btn-secondary, .btn-light{
+  background:var(--carbon-mas-alto) !important;
+  border:1px solid var(--carbon-borde) !important;
+  color:var(--hueso) !important;
+}
+.btn-dark:hover, .btn-dark:focus,
+.btn-secondary:hover, .btn-secondary:focus,
+.btn-light:hover, .btn-light:focus{
+  border-color:var(--brasa-viva) !important;
+  color:var(--hueso) !important;
+}
+/* Confirmar: oliva. Borrar o anular: óxido */
+.btn-success{
+  background:var(--oliva) !important;
+  border-color:var(--oliva) !important;
+  color:var(--hueso) !important;
+}
+.btn-danger{
+  background:var(--oxido) !important;
+  border-color:var(--oxido) !important;
+  color:var(--hueso) !important;
+}
+.btn-success:hover, .btn-danger:hover{ filter:brightness(1.12); }
+
+/* Botones de contorno (los de "Opciones" en las tablas) */
+.btn-outline-primary, .btn-outline-warning{
+  background:transparent !important;
+  border-color:var(--brasa) !important;
+  color:var(--brasa-viva) !important;
+}
+.btn-outline-primary:hover, .btn-outline-warning:hover{
+  background:var(--brasa) !important;
+  color:var(--hueso) !important;
+}
+.btn-outline-info, .btn-outline-secondary, .btn-outline-dark, .btn-outline-light{
+  background:transparent !important;
+  border-color:var(--carbon-borde) !important;
+  color:var(--hueso-tenue) !important;
+}
+.btn-outline-info:hover, .btn-outline-secondary:hover,
+.btn-outline-dark:hover, .btn-outline-light:hover{
+  background:var(--carbon-mas-alto) !important;
+  border-color:var(--hueso-opaco) !important;
+  color:var(--hueso) !important;
+}
+.btn-outline-success{
+  background:transparent !important;
+  border-color:var(--oliva) !important;
+  color:var(--oliva-claro) !important;
+}
+.btn-outline-success:hover{
+  background:var(--oliva) !important;
+  color:var(--hueso) !important;
+}
+.btn-outline-danger{
+  background:transparent !important;
+  border-color:var(--oxido) !important;
+  color:var(--oxido-claro) !important;
+}
+.btn-outline-danger:hover{
+  background:var(--oxido) !important;
+  color:var(--hueso) !important;
+}
+.btn:disabled, .btn.disabled{ opacity:0.5; }
+
+/* ---------- Insignias (estados) ---------- */
+.badge{
+  font-family:var(--font-body);
+  font-weight:600;
+  font-size:0.78rem;
+  border-radius:var(--radius);
+  padding:5px 9px;
+  border:1px solid transparent;
+}
+.badge-success, .badge-outline-success{
+  background:rgba(110,124,87,0.22) !important;
+  border-color:var(--oliva) !important;
+  color:var(--oliva-claro) !important;
+}
+.badge-danger, .badge-outline-danger{
+  background:rgba(162,59,46,0.2) !important;
+  border-color:var(--oxido) !important;
+  color:var(--oxido-claro) !important;
+}
+.badge-warning, .badge-primary, .badge-outline-warning, .badge-outline-primary{
+  background:rgba(199,81,31,0.18) !important;
+  border-color:var(--brasa) !important;
+  color:var(--brasa-viva) !important;
+}
+.badge-info, .badge-secondary, .badge-dark, .badge-light{
+  background:var(--carbon-mas-alto) !important;
+  border-color:var(--carbon-borde) !important;
+  color:var(--hueso-tenue) !important;
+}
+
+/* ---------- Tablas ---------- */
+.table{
+  color:var(--hueso) !important;
+  font-family:var(--font-body);
+}
+.table thead th{
+  color:var(--hueso-tenue) !important;
+  font-family:var(--font-mono);
+  font-size:0.76rem;
+  font-weight:500;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  border-top:none !important;
+  border-bottom:1px solid var(--carbon-borde) !important;
+  background:transparent !important;
+}
+.table td{
+  color:var(--hueso) !important;
+  font-size:0.95rem;
+  border-color:var(--carbon-borde) !important;
+  vertical-align:middle;
+}
+.table-hover tbody tr:hover,
+.table-hover tbody tr:hover td{
+  background:var(--carbon-mas-alto) !important;
+  color:var(--hueso) !important;
+}
+
+/* Controles de DataTables: buscar, cantidad de filas, información y páginas */
+div.dt-container{ color:var(--hueso-tenue); font-family:var(--font-body); }
+div.dt-container .dt-search input,
+div.dt-container .dt-length select{
+  background:var(--carbon) !important;
+  border:1px solid var(--carbon-borde) !important;
+  color:var(--hueso) !important;
+  border-radius:var(--radius);
+  padding:6px 10px;
+}
+div.dt-container .dt-search input:focus,
+div.dt-container .dt-length select:focus{
+  border-color:var(--brasa-viva) !important;
+  outline:none;
+}
+div.dt-container .dt-info,
+div.dt-container .dt-search label,
+div.dt-container .dt-length label{
+  color:var(--hueso-tenue) !important;
+  font-size:0.85rem;
+}
+div.dt-container .dt-paging .dt-paging-button{
+  color:var(--hueso-tenue) !important;
+  background:transparent !important;
+  border:1px solid transparent !important;
+  border-radius:var(--radius) !important;
+}
+div.dt-container .dt-paging .dt-paging-button:hover{
+  color:var(--hueso) !important;
+  background:var(--carbon-mas-alto) !important;
+  border-color:var(--carbon-borde) !important;
+}
+div.dt-container .dt-paging .dt-paging-button.current,
+div.dt-container .dt-paging .dt-paging-button.current:hover{
+  color:var(--hueso) !important;
+  background:var(--brasa) !important;
+  border-color:var(--brasa) !important;
+}
+div.dt-container .dt-paging .dt-paging-button.disabled,
+div.dt-container .dt-paging .dt-paging-button.disabled:hover{
+  color:var(--hueso-opaco) !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  opacity:0.6;
+}
+div.dt-container .dt-processing{
+  background:var(--carbon-alto) !important;
+  color:var(--hueso) !important;
+  border:1px solid var(--carbon-borde);
+}
+/* Puntos animados de "Procesando..." */
+div.dt-container .dt-processing > div:last-child > div{
+  background:var(--brasa-viva) !important;
+}
+
+/* ---------- Barras de progreso y listas ---------- */
+.progress{ background:var(--carbon-borde) !important; }
+.list-group-item{
+  background:transparent !important;
+  border-color:var(--carbon-borde) !important;
+  color:var(--hueso) !important;
+}
+.list-group{ border-color:var(--carbon-borde) !important; }
+
+/* Cambio a devolver en Vender (la plantilla lo pintaba de rojo puro) */
+#cambio, #moneda{ color:var(--brasa-viva) !important; }
+
+/* ---------- Formularios ---------- */
+.form-group label, .modal label{
+  color:var(--hueso-tenue);
+  font-size:0.85rem;
+  font-family:var(--font-body);
+}
+.form-control,
+select.form-control,
+textarea.form-control,
+.form-select,
+.bootstrap-select > .dropdown-toggle{
+  background:var(--carbon) !important;
+  border:1px solid var(--carbon-borde) !important;
+  color:var(--hueso) !important;
+  font-family:var(--font-body);
+  border-radius:var(--radius) !important;
+}
+.form-control:focus,
+.bootstrap-select > .dropdown-toggle:focus{
+  border-color:var(--brasa-viva) !important;
+  box-shadow:none !important;
+  outline:none !important;
+}
+.form-control::placeholder{ color:var(--hueso-opaco) !important; opacity:1; }
+.form-control:disabled, .form-control[readonly]{
+  background:var(--carbon-alto) !important;
+  color:var(--hueso-tenue) !important;
+}
+.form-select{ width:100%; padding:8px 12px; }
+select.form-control option, .form-select option{ background:var(--carbon-alto); color:var(--hueso); }
+
+/* Listas desplegables (selectores y menú del usuario) */
+.dropdown-menu{
+  background:var(--carbon-alto) !important;
+  border:1px solid var(--carbon-borde) !important;
+  color:var(--hueso) !important;
+}
+.dropdown-menu .dropdown-item,
+.dropdown-menu h6,
+.dropdown-menu .preview-subject{ color:var(--hueso) !important; }
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus{ background:var(--carbon-mas-alto) !important; }
+.dropdown-menu .dropdown-item.active,
+.dropdown-menu .dropdown-item.selected{
+  background:var(--brasa-tenue) !important;
+  color:var(--hueso) !important;
+}
+.dropdown-divider{ border-color:var(--carbon-borde) !important; }
+
+/* ---------- Modales ---------- */
+.modal-content{
+  background:var(--carbon-alto) !important;
+  border:1px solid var(--carbon-borde) !important;
+  border-radius:var(--radius-lg) !important;
+  color:var(--hueso) !important;
+}
+.modal-header{
+  background:var(--carbon-mas-alto) !important;
+  border-bottom:1px solid var(--carbon-borde) !important;
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+}
+.modal-footer{ border-top:1px solid var(--carbon-borde) !important; }
+.modal-title{
+  color:var(--hueso) !important;
+  font-family:var(--font-display);
+  font-weight:600 !important;
+}
+/* Fichas de detalle dentro de los modales ("Ver usuario", "Ver producto") */
+.modal .card{
+  background:var(--carbon) !important;
+  border:1px solid var(--carbon-borde) !important;
+}
+.modal .card .card-title{
+  color:var(--hueso-opaco) !important;
+  font-family:var(--font-mono);
+  font-size:0.72rem !important;
+  font-weight:500 !important;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.modal .card .card-text{ color:var(--hueso) !important; font-size:1rem; }
+/* Botón de cerrar */
+.modal .close, .modal .btn-close{
+  color:var(--hueso-tenue) !important;
+  background:transparent;
+  border:none;
+  opacity:1;
+  text-shadow:none;
+  font-size:1.5rem;
+  line-height:1;
+  cursor:pointer;
+}
+.modal .btn-close::before{ content:"\00d7"; }
+.modal .close:hover, .modal .btn-close:hover{ color:var(--hueso) !important; }
+.modal-backdrop{ background:#120f0d; }
+
+/* ---------- Avisos ---------- */
+.alert{ border-radius:var(--radius); font-family:var(--font-body); }
+.alert-danger{
+  background:rgba(162,59,46,0.18) !important;
+  border:1px solid var(--oxido) !important;
+  color:var(--oxido-claro) !important;
+}
+.alert-success{
+  background:rgba(110,124,87,0.2) !important;
+  border:1px solid var(--oliva) !important;
+  color:var(--oliva-claro) !important;
+}
+.alert-warning, .alert-info, .alert-primary{
+  background:rgba(199,81,31,0.16) !important;
+  border:1px solid var(--brasa) !important;
+  color:var(--brasa-viva) !important;
+}
+
+/* Ventanas de SweetAlert2 */
+.swal2-popup{
+  background:var(--carbon-alto) !important;
+  border:1px solid var(--carbon-borde);
+  border-radius:var(--radius-lg) !important;
+  color:var(--hueso) !important;
+  font-family:var(--font-body);
+}
+.swal2-title{
+  color:var(--hueso) !important;
+  font-family:var(--font-display);
+  font-weight:600;
+}
+.swal2-html-container, .swal2-content{ color:var(--hueso-tenue) !important; }
+.swal2-styled{ border-radius:var(--radius) !important; font-weight:600; box-shadow:none !important; }
+.swal2-styled.swal2-confirm{ background:var(--brasa) !important; color:var(--hueso) !important; }
+.swal2-styled.swal2-confirm:hover{ background:var(--brasa-viva) !important; }
+.swal2-styled.swal2-cancel{
+  background:transparent !important;
+  border:1px solid var(--carbon-borde) !important;
+  color:var(--hueso) !important;
+}
+.swal2-styled.swal2-deny{ background:var(--oxido) !important; color:var(--hueso) !important; }
+.swal2-input, .swal2-textarea, .swal2-select{
+  background:var(--carbon) !important;
+  border:1px solid var(--carbon-borde) !important;
+  color:var(--hueso) !important;
+}
+.swal2-timer-progress-bar{ background:var(--brasa-viva) !important; }
