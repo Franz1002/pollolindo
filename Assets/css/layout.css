@@ -152,7 +152,7 @@ footer.footer{
 /* ---------- Menú lateral compacto ----------
    Con los grupos del admin el menú no entraba en una pantalla de 768 px de alto
    y había que bajar para llegar a "Cerrar sesión" */
-.sidebar .nav .nav-item.nav-category{ padding:10px 19px 2px !important; }
+.sidebar .nav .nav-item.nav-category{ padding:8px 19px 2px !important; }
 .sidebar .nav .nav-item.nav-category .nav-link{
   padding:0 !important;
   line-height:14px;
@@ -177,3 +177,5 @@ footer.footer{
 /* La marca es un enlace, pero no se subraya */
 .sidebar .sidebar-brand-wrapper .sidebar-brand,
 .sidebar .sidebar-brand-wrapper .sidebar-brand:hover{ text-decoration:none !important; }
+/* "Cerrar sesión" va separado del último grupo por una línea */
+.sidebar .nav .nav-item.salir-menu{ margin-top:6px; border-top:1px solid var(--carbon-borde); padding-top:2px; }

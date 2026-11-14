@@ -25,6 +25,7 @@ if ($esAdminMenu) {
     ],
     'Administración' => [
       ['Usuarios', '/usuarios', 'mdi-account-multiple'],
+      ['Configuración', '/configuracion', 'mdi-settings'],
     ],
   ];
 } else {
@@ -52,10 +53,7 @@ if ($esAdminMenu) {
 <?php } ?>
 <?php } ?>
 
-<li class="nav-item nav-category">
-  <span class="nav-link">Sesión</span>
-</li>
-<li class="nav-item menu-items">
+<li class="nav-item menu-items salir-menu">
   <a class="nav-link" href="<?= base_url(); ?>/login/logout">
     <span class="menu-icon">
       <i class="mdi mdi-logout-variant"></i>
