@@ -31,7 +31,9 @@ class Caja extends Controllers
 
         $resumen = $this->model->resumenVentasPeriodo($cajaAbierta['fecha_apertura'], date('Y-m-d H:i:s'));
         $cajaAbierta['abierta'] = true;
-        $cajaAbierta['efectivo_esperado_actual'] = $resumen['total_ventas'];
+        // El esperado es solo efectivo; lo cobrado por QR se informa aparte
+        $cajaAbierta['efectivo_esperado_actual'] = $resumen['total_efectivo'];
+        $cajaAbierta['ventas_qr_actual'] = $resumen['total_qr'];
         $cajaAbierta['cantidad_tickets_actual'] = $resumen['cantidad_tickets'];
 
         echo json_encode($cajaAbierta, JSON_UNESCAPED_UNICODE);
@@ -66,7 +68,9 @@ class Caja extends Controllers
         $fechaCierre = date('Y-m-d H:i:s');
         $resumen = $this->model->resumenVentasPeriodo($cajaAbierta['fecha_apertura'], $fechaCierre);
 
-        $efectivoEsperado = floatval($resumen['total_ventas']);
+        // Se compara efectivo contra efectivo: las ventas por QR no pasan por el cajón
+        $efectivoEsperado = floatval($resumen['total_efectivo']);
+        $totalVentas = floatval($resumen['total_ventas']);
         $cantidadTickets = intval($resumen['cantidad_tickets']);
         $numDescuentos = intval($resumen['num_descuentos']);
         $diferencia = round($efectivoDeclarado - $efectivoEsperado, 2);
@@ -75,7 +79,7 @@ class Caja extends Controllers
         $features = [
             'diferencia_relativa'  => $efectivoEsperado > 0 ? round($diferencia / $efectivoEsperado, 4) : 0,
             'cantidad_tickets'     => $cantidadTickets,
-            'ticket_promedio'      => $cantidadTickets > 0 ? round($efectivoEsperado / $cantidadTickets, 2) : 0,
+            'ticket_promedio'      => $cantidadTickets > 0 ? round($totalVentas / $cantidadTickets, 2) : 0,
             'num_descuentos'       => $numDescuentos,
             'duracion_turno_horas' => round($duracionHoras, 2),
             'hora_cierre'          => intval(date('G', strtotime($fechaCierre))),

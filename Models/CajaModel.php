@@ -24,12 +24,21 @@ class CajaModel extends Mysql
         $sql = "SELECT
                 COUNT(t.id_ticket) AS cantidad_tickets,
                 COALESCE(SUM(t.total), 0) AS total_ventas,
+                -- Solo el efectivo entra al cajón: lo cobrado por QR no se espera en el arqueo
+                COALESCE(SUM(CASE v.metodo_pago
+                    WHEN 'qr' THEN 0
+                    WHEN 'mixto' THEN COALESCE(v.monto_efectivo, 0)
+                    ELSE t.total END), 0) AS total_efectivo,
+                COALESCE(SUM(CASE v.metodo_pago
+                    WHEN 'qr' THEN t.total
+                    WHEN 'mixto' THEN COALESCE(v.monto_qr, 0)
+                    ELSE 0 END), 0) AS total_qr,
                 COALESCE(SUM(CASE WHEN t.descuento > 0 THEN 1 ELSE 0 END), 0) AS num_descuentos
             FROM ticket t
             INNER JOIN venta v ON v.id_venta = t.venta_id
             WHERE v.fecha_venta BETWEEN ? AND ?";
         $resultado = $this->select1($sql, [$fechaInicio, $fechaFin]);
-        return $resultado ? $resultado[0] : ['cantidad_tickets' => 0, 'total_ventas' => 0, 'num_descuentos' => 0];
+        return $resultado ? $resultado[0] : ['cantidad_tickets' => 0, 'total_ventas' => 0, 'total_efectivo' => 0, 'total_qr' => 0, 'num_descuentos' => 0];
     }
 
     public function cerrarCaja(int $idCaja, float $efectivoEsperado, float $efectivoDeclarado, int $cantidadTickets, int $numDescuentos, int $cerradoPor, ?float $scoreAnomalia, bool $esAnomalia, ?string $motivoAnomalia)

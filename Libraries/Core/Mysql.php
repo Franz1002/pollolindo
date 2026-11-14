@@ -45,6 +45,20 @@ class Mysql extends Conexion
 		return $stmt->execute($arrValues);
 	}
 
+	// Ejecuta varias operaciones como una sola: o se guardan todas o no se guarda ninguna
+	public function transaccion(callable $operaciones)
+	{
+		$this->conexion->beginTransaction();
+		try {
+			$resultado = $operaciones();
+			$this->conexion->commit();
+			return $resultado;
+		} catch (\Throwable $e) {
+			$this->conexion->rollBack();
+			throw $e;
+		}
+	}
+
 	public function delete(string $query, array $arrValues = [])
 	{
 		$stmt = $this->conexion->prepare($query);
