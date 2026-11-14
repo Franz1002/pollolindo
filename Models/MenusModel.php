@@ -67,9 +67,10 @@ JOIN categoria c ON m.categoria_id = c.id_categoria";
         return $request;
     }
 
-    public function deleteMenu($idMenu)
+    // El producto no se borra: se desactiva (estado 2), para no perder el historial de ventas ni su receta
+    public function desactivarMenu(int $idMenu)
     {
-        $sql = "DELETE FROM menu WHERE id_menu = ?";
-        return $this->delete($sql, [$idMenu]);
+        $sql = "UPDATE menu SET estado = 2 WHERE id_menu = ?";
+        return $this->update($sql, [$idMenu]);
     }
 }

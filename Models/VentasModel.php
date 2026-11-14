@@ -8,19 +8,19 @@ class VentasModel extends Mysql
 
     public function selectMenu()
     {
-        $sql = "SELECT * FROM menu WHERE categoria_id = 1 AND estado != 0";
+        $sql = "SELECT * FROM menu WHERE categoria_id = 1 AND estado = 1";
         return $this->select_all($sql);
     }
 
     public function selectBebida()
     {
-        $sql = "SELECT * FROM menu WHERE categoria_id = 2 AND estado != 0";
+        $sql = "SELECT * FROM menu WHERE categoria_id = 2 AND estado = 1";
         return $this->select_all($sql);
     }
 
     public function selectCombo()
     {
-        $sql = "SELECT * FROM menu WHERE categoria_id = 3 AND estado != 0";
+        $sql = "SELECT * FROM menu WHERE categoria_id = 3 AND estado = 1";
         return $this->select_all($sql);
     }
 

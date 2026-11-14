@@ -258,11 +258,11 @@ function viewMenu(idMenu) {
 
 function deletMenu(idMenu) {
     Swal.fire({
-        title: '¿Eliminar este menú?',
-        text: "Esta acción no se puede deshacer.",
+        title: '¿Desactivar este producto?',
+        text: "Dejará de aparecer en Vender. Las ventas ya registradas no cambian y puedes reactivarlo desde Editar.",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'Sí, desactivar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -276,7 +276,7 @@ function deletMenu(idMenu) {
                 .then(response => response.json())
                 .then(result => {
                     if (result.status) {
-                        Swal.fire('¡Eliminado!', result.msg, 'success')
+                        Swal.fire('Desactivado', result.msg, 'success')
                             .then(() => tableMenus.ajax.reload(null, false));
                     } else {
                         Swal.fire('Error', result.msg, 'error');
@@ -284,7 +284,7 @@ function deletMenu(idMenu) {
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    Swal.fire('Error', 'Hubo un problema al eliminar.', 'error');
+                    Swal.fire('Error', 'Hubo un problema al desactivar el producto.', 'error');
                 });
         }
     });

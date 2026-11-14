@@ -28,7 +28,11 @@ class Menus extends Controllers
 			// Construcción de botones
 			$btnView = '<button class="btn btn-outline-info btn-rounded btn-icon" onClick="viewMenu(' . $arrData[$i]['id_menu'] . ')" title="Ver"><i class="mdi mdi-eye"></i></button>';
 			$btnEdit = '<button class="btn btn-outline-success btn-rounded btn-icon" onClick="editMenu(' . $arrData[$i]['id_menu'] . ')" title="Editar"><i class="mdi mdi-pencil"></i></button>';
-			$btnDelete = '<button class="btn btn-outline-danger btn-rounded btn-icon" onClick="deletMenu(' . $arrData[$i]['id_menu'] . ')" title="Eliminar"><i class="mdi mdi-delete"></i></button>';
+			// Solo los productos activos se pueden desactivar; un inactivo se reactiva desde Editar
+			$btnDelete = '';
+			if ($arrData[$i]['estado_menu'] == 1) {
+				$btnDelete = '<button class="btn btn-outline-danger btn-rounded btn-icon" onClick="deletMenu(' . $arrData[$i]['id_menu'] . ')" title="Desactivar"><i class="mdi mdi-eye-off"></i></button>';
+			}
 
 			// Agrega las opciones al array
 			$arrData[$i]['options'] = '<div class="text-center">' . $btnView . ' ' . $btnEdit . ' ' . $btnDelete . '</div>';
@@ -138,11 +142,12 @@ class Menus extends Controllers
 		$this->esAdmin();
 		if ($_POST) {
 			$intIdMenu = intval($_POST['id_menu']);
-			$requestDel = $this->model->deleteMenu($intIdMenu);
+			// No se borra la fila: el producto queda inactivo y deja de salir en Vender
+			$requestDel = $intIdMenu > 0 && $this->model->desactivarMenu($intIdMenu);
 			if ($requestDel) {
-				$arrResponse = array('status' => true, 'msg' => 'Menú eliminado correctamente.');
+				$arrResponse = array('status' => true, 'msg' => 'Producto desactivado. Ya no aparece en Vender.');
 			} else {
-				$arrResponse = array('status' => false, 'msg' => 'No se pudo eliminar el menú.');
+				$arrResponse = array('status' => false, 'msg' => 'No se pudo desactivar el producto.');
 			}
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 		}
