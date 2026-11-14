@@ -168,3 +168,5 @@ footer.footer{
   height:26px !important;
   background:transparent !important;
 }
+/* La plantilla dejaba 60 px vacíos bajo el menú y la página quedaba con una barra de desplazamiento */
+.sidebar > .nav{ margin-bottom:0 !important; }

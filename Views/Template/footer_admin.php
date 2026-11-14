@@ -31,6 +31,8 @@
 <script src="<?= base_url_template(); ?>/assets/js/todolist.js"></script>
 
 <!-- Funciones JS de la página -->
-<?php if (!empty($data['page_functions_js'])) { ?>
-<script src="<?= media(); ?>/js/<?= $data['page_functions_js']; ?>"></script>
+<?php if (!empty($data['page_functions_js'])) {
+  // La fecha del archivo va en la dirección: si el script cambia, el navegador no usa la copia vieja
+  $versionJs = @filemtime('Assets/js/' . $data['page_functions_js']) ?: 1; ?>
+<script src="<?= media(); ?>/js/<?= $data['page_functions_js']; ?>?v=<?= $versionJs; ?>"></script>
 <?php } ?>

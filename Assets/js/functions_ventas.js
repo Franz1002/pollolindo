@@ -1,639 +1,515 @@
-function cargarProductos(url, containerId) {
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      const container = document.getElementById(containerId);
+// Pantalla Vender: arma el pedido y lo envía completo al servidor en una sola petición.
+// Los montos que se ven aquí son solo para mostrar: el servidor vuelve a calcular precios, total y cambio.
+(function () {
+  'use strict';
 
-      data.forEach(producto => {
-        // Crear el HTML para cada producto
-        const productRow = document.createElement('div');
-        productRow.classList.add('product-row');
+  const el = (id) => document.getElementById(id);
+  const redondear = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+  const dinero = (n) => redondear(n).toFixed(2);
+  // Acepta "12,5" o "12.5"; lo que no sea un número cuenta como 0
+  const numero = (texto) => {
+    const n = parseFloat(String(texto).replace(',', '.'));
+    return isFinite(n) && n > 0 ? n : 0;
+  };
 
-        const button = document.createElement('button');
-        button.classList.add('btn', 'btn-primary', 'btn-product');
-        button.textContent = `${producto.nombre_menu} - ${producto.precio_menu} Bs.`;
-        button.setAttribute('data-price', producto.precio_menu);
-        button.setAttribute('data-id', producto.id_menu);
+  let catalogo = [];            // productos activos que entrega el servidor
+  const pedido = new Map();     // id_menu -> cantidad
+  const estado = {
+    categoria: 'todas',
+    tipo: null,                 // 'mesa' o 'llevar'
+    mesa: null,
+    metodo: 'efectivo',         // 'efectivo', 'qr' o 'mixto'
+    conDescuento: false,
+    enviando: false
+  };
 
-        // Cambiar el color del texto a negro
-        button.style.color = 'black';  // Aplica el color negro al texto del botón
-
-        const quantityInput = document.createElement('input');
-        quantityInput.type = 'number';
-        quantityInput.classList.add('form-control', 'quantity-input');
-        quantityInput.value = 1;
-        quantityInput.min = 1;
-
-        // Añadir el botón y el input al contenedor de producto
-        productRow.appendChild(button);
-        productRow.appendChild(quantityInput);
-
-        // Insertar el producto en el contenedor
-        container.appendChild(productRow);
+  // ---------- Productos ----------
+  function cargarCatalogo() {
+    fetch(base_url + '/Ventas/getCatalogo')
+      .then((respuesta) => respuesta.json())
+      .then((datos) => {
+        catalogo = datos.productos.map((p) => ({
+          id: parseInt(p.id_menu, 10),
+          nombre: p.nombre_menu,
+          precio: parseFloat(p.precio_menu),
+          categoriaId: String(p.categoria_id),
+          categoria: p.nombre_categoria
+        }));
+        pintarCategorias();
+        pintarProductos();
+        pintarMesas(parseInt(datos.mesas, 10) || 0);
+      })
+      .catch(() => {
+        el('vn-grilla').innerHTML = '<p class="vn-vacio">No se pudieron cargar los productos. Recarga la página (F5).</p>';
       });
-    })
-    .catch(error => {
-      console.error('Error al cargar los productos:', error);
+  }
+
+  function pintarCategorias() {
+    const caja = el('vn-categorias');
+    caja.innerHTML = '';
+    const categorias = new Map();
+    catalogo.forEach((p) => {
+      const actual = categorias.get(p.categoriaId) || { nombre: p.categoria, total: 0 };
+      actual.total++;
+      categorias.set(p.categoriaId, actual);
     });
-}
-
-// Llamar a la función con las URLs y los contenedores correspondientes
-cargarProductos(base_url + '/Ventas/getMenu/', 'menu-container');
-cargarProductos(base_url + '/Ventas/getBebida/', 'bebida-container');
-cargarProductos(base_url + '/Ventas/getCombo/', 'combo-container');
-
-let productos = [];
-let subtotal = 0,
-  totalFinal = 0;
-
-//eventos para agregar productos
-function agregarProducto(name, price, quantity, menu_id) {
-  // Verificar si el producto ya existe en la lista
-  let productoExistente = productos.find((p) => p.name === name);
-
-  if (productoExistente) {
-    // Si ya existe, solo aumentamos la cantidad y recalculamos el total
-    productoExistente.cantidad += quantity;
-    productoExistente.total = productoExistente.cantidad * productoExistente.price;
-  } else {
-    // Si no existe, lo agregamos como nuevo
-    productos.push({
-      name,
-      price,
-      cantidad: quantity,
-      total: price * quantity,
-      menu_id: menu_id  // Asegúrate de que el menu_id se esté pasando correctamente
-    });
-  }
-
-  // Actualizar el ticket después de agregar el producto
-  actualizarTicket();
-}
-
-function eliminarProducto(index) {
-  productos.splice(index, 1);
-  actualizarTicket();
-}
-
-function actualizarTicket() {
-  const lista = document.getElementById("productosSeleccionados");
-  lista.innerHTML = "";
-
-  subtotal = productos.reduce((sum, p) => sum + p.total, 0);
-  totalFinal = subtotal;
-
-  productos.forEach((p, index) => {
-    let li = document.createElement("li");
-    li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
-    li.innerHTML = `${p.cantidad} x ${p.name} - ${p.total.toFixed(2)} Bs. 
-    <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${index})"> X</button>`;
-    lista.appendChild(li);
-  });
-
-  // Actualizar los totales en la sección de Pagos
-  document.getElementById("subtotal").textContent = subtotal.toFixed(2);
-  document.getElementById("total-final").textContent = totalFinal.toFixed(2);
-  calcularCambio();
-}
-
-function aplicarDescuento() {
-  // Obtener el descuento en efectivo (monto fijo)
-  const descuentoEfectivo = parseFloat(document.getElementById('descuento').value) || 0;
-
-  // Calcular el total final restando el descuento en efectivo al subtotal
-  totalFinal = subtotal - descuentoEfectivo;
-
-  // Mostrar el total final en la interfaz
-  document.getElementById('total-final').textContent = totalFinal.toFixed(2);
-}
-
-function calcularCambio() {
-  let efectivo = parseFloat(document.getElementById('efectivo-recibido').value) || 0;
-
-  if (totalFinal <= 0) {
-    document.getElementById('cambio').textContent = "N/A";
-    return;
-  }
-
-  let cambio = efectivo - totalFinal;
-  document.getElementById('cambio').textContent = cambio < 0 ? "Falta dinero" : cambio.toFixed(2);
-}
-
-function convertirEntero(num) {
-  const unidades = ["", "UNO", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE"];
-  const decenas = ["", "DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE", "DIECISEIS", "DIECISIETE", "DIECIOCHO", "DIECINUEVE"];
-  const decenasAltas = ["", "", "VEINTE", "VEINTIUNO", "VEINTIDOS", "VEINTITRES", "VEINTICUATRO", "VEINTICINCO", "VEINTISEIS", "VEINTISIETE"];
-  const centenas = ["", "CIENTO", "DOSCIENTOS", "TRESCIENTOS", "CUATROCIENTOS", "QUINIENTOS", "SEISCIENTOS", "SETECIENTOS", "OCHOCIENTOS", "NOVECIENTOS"];
-  const miles = ["", "MIL"];
-
-  if (num === 0) return "CERO";
-
-  let letras = '';
-
-  // Desglosamos los números
-  let c = Math.floor(num / 100); // Centenas
-  let d = Math.floor((num % 100) / 10); // Decenas
-  let u = num % 10; // Unidades
-
-  if (c > 0) {
-    letras += centenas[c] + " ";
-  }
-
-  if (d === 1 && u > 0) { // Para números entre 10 y 19
-    letras += decenas[u] + " ";
-  } else {
-    if (d >= 2) {
-      letras += decenasAltas[d] + " ";
-    }
-    if (u > 0) {
-      letras += unidades[u] + " ";
-    }
-  }
-
-  return letras.trim();
-}
-
-function numeroALetras(num) {
-  let [entero, decimal] = num.toFixed(2).split(".");
-
-  // Convertir la parte entera
-  let resultado = convertirEntero(parseInt(entero));
-
-  // Si el valor decimal es mayor que 0, lo convertimos
-  if (parseInt(decimal) > 0) {
-    resultado += ` CON ${convertirEntero(parseInt(decimal))} CENTAVOS`;
-  } else {
-    resultado += " BOLIVIANOS";
-  }
-
-  return resultado;
-}
-
-async function registrarCliente(nombre) {
-  const cliente = { nombre: nombre };
-
-  try {
-    const response = await fetch(base_url + '/Clientes/setCliente', {
-
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(cliente)
-    });
-
-    const textResponse = await response.text();  // Obtiene la respuesta en texto
-
-    // Intentamos convertirla en JSON
-    try {
-      const data = JSON.parse(textResponse);
-      console.log("Respuesta parseada:", data);
-      if (data.status) {
-        return data.id_cliente;  // Retornamos el ID del cliente si todo está bien
-      } else {
-        alert('Error al registrar el cliente: ' + (data.msg || 'Desconocido'));
-        return null;
-      }
-    } catch (jsonError) {
-      console.error("Error al convertir la respuesta a JSON:", jsonError);
-      alert("El servidor devolvió un formato inválido.");
-      return null;
-    }
-
-  } catch (error) {
-    console.error('Error al registrar el cliente:', error);
-    alert('Hubo un error al registrar el cliente. Inténtalo de nuevo.');
-    return null;
-  }
-}
-
-// Función para finalizar la venta
-async function finalizarVenta() {
-  let efectivo = parseFloat(document.querySelector("#efectivo-recibido").value) || 0;
-  let totalFinal = parseFloat(document.querySelector("#total-final").textContent) || 0;
-
-  if (productos.length === 0) {
-    alert("No hay productos en la venta.");
-    return;
-  }
-
-
-
-  if (totalFinal <= 0) {
-    alert("El total final no puede ser 0.");
-    return;
-  }
-
-  let cambio = efectivo - totalFinal;
-  if (cambio < 0) {
-    alert("El efectivo recibido es insuficiente.");
-    return;
-  }
-
-  // Obtener datos del cliente
-  let nombreCliente = document.getElementById("nombre-cliente").value.trim();
-  //let celularCliente = document.getElementById("numero-cliente").value.trim();
-
-  // Si los campos están vacíos, asignar null para que no se registre un cliente
-  let cliente_id = null;
-  if (nombreCliente !== "") {
-    cliente_id = await registrarCliente(nombreCliente);
-  }
-
-  console.log("ID del cliente obtenido:", cliente_id);  // <-- DEPURACIÓN
-
-
-  // Recoger los detalles de la venta
-  let productosSeleccionados = productos.map(producto => ({
-    //menu_id: producto.menu_id,  // Asegúrate de que 'menu_id' esté presente
-    menu_id: parseInt(producto.menu_id, 10),
-    cantidad: producto.cantidad,
-    subtotal: producto.total  // Este es el subtotal calculado previamente
-  }));
-
-  // Obtener el descuento
-  let descuento = parseFloat(document.getElementById('descuento').value) || 0;
-
-  // Registrar la venta
-  console.log("Llamando a registrarVenta con cliente_id:", cliente_id);
-  await registrarVenta(cliente_id, efectivo, cambio, totalFinal, descuento, productosSeleccionados);
-  console.log("Venta registrada correctamente.");  // <-- Si este mensaje no aparece, la función no se ejecutó
-
-}
-
-// Función para finalizar la venta
-async function finalizarVentaDoble() {
-  let efectivo = parseFloat(document.querySelector("#efectivo-recibido").value) || 0;
-  let totalFinal = parseFloat(document.querySelector("#total-final").textContent) || 0;
-
-  if (productos.length === 0) {
-    alert("No hay productos en la venta.");
-    return;
-  }
-
-  if (totalFinal <= 0) {
-    alert("El total final no puede ser 0.");
-    return;
-  }
-
-  let cambio = efectivo - totalFinal;
-  if (cambio < 0) {
-    alert("El efectivo recibido es insuficiente.");
-    return;
-  }
-
-  // Obtener datos del cliente
-  let nombreCliente = document.getElementById("nombre-cliente").value.trim();
-  // let celularCliente = document.getElementById("numero-cliente").value.trim();
-
-  // Si los campos están vacíos, asignar null para que no se registre un cliente
-  let cliente_id = null;
-  if (nombreCliente !== "") {
-    cliente_id = await registrarCliente(nombreCliente);
-  }
-
-  console.log("ID del cliente obtenido:", cliente_id);  // <-- DEPURACIÓN
-
-
-  // Recoger los detalles de la venta
-  let productosSeleccionados = productos.map(producto => ({
-    //menu_id: producto.menu_id,  // Asegúrate de que 'menu_id' esté presente
-    menu_id: parseInt(producto.menu_id, 10),
-    cantidad: producto.cantidad,
-    subtotal: producto.total  // Este es el subtotal calculado previamente
-  }));
-
-  // Obtener el descuento
-  let descuento = parseFloat(document.getElementById('descuento').value) || 0;
-
-  // Registrar la venta
-  console.log("Llamando a registrarVentaDoble con cliente_id:", cliente_id);
-  await registrarVentaDoble(cliente_id, efectivo, cambio, totalFinal, descuento, productosSeleccionados);
-  console.log("Venta registrada correctamente.");  // <-- Si este mensaje no aparece, la función no se ejecutó
-
-}
-
-async function obtenerUsuarioId() {
-  try {
-    const response = await fetch(base_url + '/Usuarios/getUsuarioId');
-    const data = await response.json();
-    if (data.usuario_id && data.usuario_id.id) {
-      return data.usuario_id.id; // Aquí obtenemos el ID directamente
-    } else {
-      console.error("No se pudo obtener el usuario_id");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error al obtener el usuario_id:", error);
-    return null;
-  }
-}
-
-async function obtenerUsuarioNombre() {
-  try {
-    const response = await fetch(base_url + '/Usuarios/getUsuarioId');
-    const data = await response.json();
-
-    // Retorna un objeto con el nombre y apellido
-    return {
-      nombre: data.usuario_id?.nombre ?? null,
-      apellido: data.usuario_id?.apellido ?? null
+    const crear = (clave, nombre, total) => {
+      const boton = document.createElement('button');
+      boton.type = 'button';
+      boton.className = 'vn-chip' + (estado.categoria === clave ? ' activo' : '');
+      boton.dataset.categoria = clave;
+      boton.textContent = nombre;
+      const cuenta = document.createElement('small');
+      cuenta.textContent = total;
+      boton.appendChild(cuenta);
+      caja.appendChild(boton);
     };
-  } catch (error) {
-    console.error('Error al obtener el nombre y apellido del usuario:', error);
-    return { nombre: null, apellido: null }; // En caso de error, retornamos null para ambos campos
+    crear('todas', 'Todos', catalogo.length);
+    categorias.forEach((c, clave) => crear(clave, c.nombre, c.total));
   }
-}
 
-// Función para registrar la venta y obtener el número de pedido
-async function registrarVenta(cliente_id, efectivo, cambio, totalFinal, descuento, productosSeleccionados) {
-  const usuario_id = await obtenerUsuarioId();
-  console.log(usuario_id); // Aquí puedes ver el id del usuario en la consola
-
-  if (usuario_id === null) {
-    console.log("No se pudo obtener el usuario_id");
-    return;
-  }
-  const ventaData = {
-    usuario_id: usuario_id,
-    fecha_venta: new Date().toISOString(),
-    total_venta: totalFinal,
-  };
-
-  try {
-    const responseVenta = await fetch(base_url + '/Ventas/registrarVenta', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(ventaData)
+  function productosVisibles() {
+    const busqueda = el('vn-buscar').value.trim().toLowerCase();
+    return catalogo.filter((p) => {
+      // Al buscar se mira en todas las categorías
+      if (busqueda) {
+        return p.nombre.toLowerCase().includes(busqueda);
+      }
+      return estado.categoria === 'todas' || p.categoriaId === estado.categoria;
     });
+  }
 
-    const responseVentaText = await responseVenta.text();
-    console.log("Respuesta del servidor:", responseVentaText);
-
-    let dataVenta;
-    try {
-      dataVenta = JSON.parse(responseVentaText);
-    } catch (error) {
-      console.error("Error al analizar la respuesta JSON:", error);
+  function pintarProductos() {
+    const grilla = el('vn-grilla');
+    grilla.innerHTML = '';
+    const visibles = productosVisibles();
+    if (!visibles.length) {
+      const vacio = document.createElement('p');
+      vacio.className = 'vn-vacio';
+      vacio.textContent = 'No hay productos que coincidan.';
+      grilla.appendChild(vacio);
       return;
     }
+    visibles.forEach((p) => {
+      const cantidad = pedido.get(p.id) || 0;
+      const boton = document.createElement('button');
+      boton.type = 'button';
+      boton.className = 'vn-prod' + (cantidad ? ' en-pedido' : '');
+      boton.dataset.id = p.id;
+      boton.title = 'Agregar ' + p.nombre;
 
-    if (dataVenta.status) {
-      const venta_id = parseInt(dataVenta.id_venta, 10);
-      const detallesData = productosSeleccionados.map(producto => ({
-        venta_id: venta_id,
-        menu_id: producto.menu_id,
-        cantidad: producto.cantidad,
-        subtotal: producto.subtotal
-      }));
+      const nombre = document.createElement('span');
+      nombre.className = 'vn-prod-nombre';
+      nombre.textContent = p.nombre;
+      const precio = document.createElement('span');
+      precio.className = 'vn-prod-precio';
+      precio.textContent = dinero(p.precio) + ' Bs';
+      boton.appendChild(nombre);
+      boton.appendChild(precio);
 
-      const responseDetalles = await fetch(base_url + '/Ventas/registrarDetalleVenta', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ venta_id: venta_id, productos: detallesData })
-      });
-
-      const responseDetallesText = await responseDetalles.text();
-      console.log("Respuesta del servidor detalles:", responseDetallesText);
-
-      let dataDetalles;
-      try {
-        dataDetalles = JSON.parse(responseDetallesText);
-      } catch (error) {
-        console.error("Error al analizar la respuesta JSON de detalles:", error);
-        return;
+      if (cantidad) {
+        const marca = document.createElement('span');
+        marca.className = 'vn-prod-cant';
+        marca.textContent = cantidad;
+        boton.appendChild(marca);
       }
+      grilla.appendChild(boton);
+    });
+  }
 
-      if (dataDetalles.status) {
-        const ticketData = {
-          venta_id: venta_id,
-          cliente_id: cliente_id ?? 0,
-          total: totalFinal,
-          fecha_emision: new Date().toISOString(),
-          emitido_por: usuario_id,
-          descuento: descuento,
-          efectivo_recibido: efectivo,
-          cambio: cambio,
-          productos: productosSeleccionados.map(producto => ({
-            nombre_menu: producto.nombre,
-            cantidad: producto.cantidad,
-            precio_menu: producto.precio,
-            subtotal: producto.subtotal
-          }))
-        };
-
-        const responseTicket = await fetch(base_url + '/Ventas/registrarTicket', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(ticketData)
-        });
-
-        const responseTicketText = await responseTicket.text();
-        console.log("Respuesta del servidor ticket:", responseTicketText);
-
-        let dataTicket;
-        try {
-          dataTicket = JSON.parse(responseTicketText);
-        } catch (error) {
-          console.error("Error al analizar la respuesta JSON del ticket:", error);
-          return;
-        }
-
-        if (!dataTicket.status) {
-  alert("Error al generar el ticket: " + dataTicket.msg);
-} else {
-  Swal.fire('Venta registrada', 'El ticket se generó correctamente.', 'success');
-  reiniciarVenta();
-}
-      } else {
-        alert("Error al registrar los detalles de la venta: " + dataDetalles.msg);
-      }
+  // ---------- Pedido ----------
+  function cambiarCantidad(id, diferencia) {
+    const nueva = (pedido.get(id) || 0) + diferencia;
+    if (nueva <= 0) {
+      pedido.delete(id);
     } else {
-  if (dataVenta.requiere_caja) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Caja cerrada',
-      text: dataVenta.msg,
-      confirmButtonText: 'Ir a Caja'
-    }).then(() => { window.location.href = base_url + '/caja'; });
-  } else {
-    alert("Error al registrar la venta: " + dataVenta.msg);
+      pedido.set(id, Math.min(nueva, 200));
+    }
+    // Al empezar un pedido nuevo se quita el aviso de la venta anterior
+    el('vn-resultado').classList.add('vn-oculto');
+    ocultarAviso();
+    pintarProductos();
+    pintarPedido();
   }
-}
-  } catch (error) {
-    console.error("Error al registrar la venta:", error);
-    alert("Hubo un problema al registrar la venta.");
-  }
-}
 
+  function pintarPedido() {
+    const lista = el('vn-lineas');
+    lista.innerHTML = '';
+    if (!pedido.size) {
+      const vacio = document.createElement('li');
+      vacio.className = 'vn-vacio';
+      vacio.textContent = 'Elige productos de la izquierda.';
+      lista.appendChild(vacio);
+    }
+    pedido.forEach((cantidad, id) => {
+      const p = catalogo.find((x) => x.id === id);
+      if (!p) return;
+      const fila = document.createElement('li');
+      fila.className = 'vn-linea';
+      fila.dataset.id = id;
 
+      const nombre = document.createElement('span');
+      nombre.className = 'vn-linea-nombre';
+      nombre.textContent = p.nombre;
+      nombre.title = p.nombre;
 
-// Función para registrar la venta y obtener el número de pedido
-async function registrarVentaDoble(cliente_id, efectivo, cambio, totalFinal, descuento, productosSeleccionados) {
-  const usuario_id = await obtenerUsuarioId();
-  console.log(usuario_id); // Aquí puedes ver el id del usuario en la consola
+      const control = document.createElement('span');
+      control.className = 'vn-cant';
+      control.innerHTML = '<button type="button" class="vn-mini" data-accion="menos" aria-label="Quitar uno">−</button>'
+        + '<span></span>'
+        + '<button type="button" class="vn-mini" data-accion="mas" aria-label="Agregar uno">+</button>';
+      control.querySelector('span').textContent = cantidad;
 
-  if (usuario_id === null) {
-    console.log("No se pudo obtener el usuario_id");
-    return;
-  }
-  const ventaData = {
-    usuario_id: usuario_id,
-    fecha_venta: new Date().toISOString(),
-    total_venta: totalFinal,
-  };
+      const importe = document.createElement('span');
+      importe.className = 'vn-linea-importe';
+      importe.textContent = dinero(p.precio * cantidad);
 
-  try {
-    const responseVenta = await fetch(base_url + '/Ventas/registrarVenta', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(ventaData)
+      const quitar = document.createElement('button');
+      quitar.type = 'button';
+      quitar.className = 'vn-mini quitar';
+      quitar.dataset.accion = 'quitar';
+      quitar.setAttribute('aria-label', 'Quitar ' + p.nombre);
+      quitar.textContent = '×';
+
+      fila.appendChild(nombre);
+      fila.appendChild(control);
+      fila.appendChild(importe);
+      fila.appendChild(quitar);
+      lista.appendChild(fila);
     });
+    pintarTotales();
+  }
 
-    const responseVentaText = await responseVenta.text();
-    console.log("Respuesta del servidor:", responseVentaText);
+  // Calcula lo que se muestra; el servidor repite la cuenta al cobrar
+  function calcular() {
+    let subtotal = 0;
+    pedido.forEach((cantidad, id) => {
+      const p = catalogo.find((x) => x.id === id);
+      if (p) subtotal += redondear(p.precio * cantidad);
+    });
+    subtotal = redondear(subtotal);
+    const descuento = estado.conDescuento ? Math.min(numero(el('vn-descuento').value), 100) : 0;
+    const total = redondear(subtotal * (1 - descuento / 100));
 
-    let dataVenta;
-    try {
-      dataVenta = JSON.parse(responseVentaText);
-    } catch (error) {
-      console.error("Error al analizar la respuesta JSON:", error);
+    let montoQr = 0;
+    let enEfectivo = total;
+    if (estado.metodo === 'qr') {
+      montoQr = total;
+      enEfectivo = 0;
+    } else if (estado.metodo === 'mixto') {
+      montoQr = redondear(Math.min(numero(el('vn-qr').value), total));
+      enEfectivo = redondear(total - montoQr);
+    }
+    const recibido = estado.metodo === 'qr' ? 0 : redondear(numero(el('vn-recibido').value));
+    return { subtotal, descuento, total, montoQr, enEfectivo, recibido, cambio: redondear(recibido - enEfectivo) };
+  }
+
+  function pintarTotales() {
+    const c = calcular();
+    el('vn-subtotal').textContent = dinero(c.subtotal);
+    el('vn-descuento-monto').textContent = '-' + dinero(c.subtotal - c.total);
+    el('vn-total').textContent = dinero(c.total);
+    el('vn-en-efectivo').textContent = dinero(c.enEfectivo);
+
+    const caja = el('vn-caja-cambio');
+    const falta = c.cambio < 0 && el('vn-recibido').value.trim() !== '';
+    caja.classList.toggle('falta', falta);
+    el('vn-cambio-texto').textContent = falta ? 'Falta' : 'Cambio';
+    el('vn-cambio').textContent = dinero(Math.abs(falta ? c.cambio : Math.max(c.cambio, 0)));
+  }
+
+  // ---------- Mesa o para llevar ----------
+  function pintarMesas(cantidad) {
+    const caja = el('vn-mesas');
+    caja.innerHTML = '';
+    const llevar = document.createElement('button');
+    llevar.type = 'button';
+    llevar.className = 'vn-mesa llevar';
+    llevar.dataset.llevar = '1';
+    llevar.textContent = 'Para llevar';
+    caja.appendChild(llevar);
+    for (let n = 1; n <= cantidad; n++) {
+      const boton = document.createElement('button');
+      boton.type = 'button';
+      boton.className = 'vn-mesa';
+      boton.dataset.mesa = n;
+      boton.textContent = n;
+      caja.appendChild(boton);
+    }
+  }
+
+  function elegirTipo(tipo) {
+    estado.tipo = tipo;
+    if (tipo !== 'mesa') estado.mesa = null;
+    document.querySelectorAll('.vn-mesa').forEach((b) => {
+      const activo = b.dataset.llevar ? tipo === 'llevar' : (tipo === 'mesa' && parseInt(b.dataset.mesa, 10) === estado.mesa);
+      b.classList.toggle('activo', activo);
+    });
+    el('vn-mesas').classList.remove('vn-falta');
+    ocultarAviso();
+  }
+
+  // ---------- Forma de pago ----------
+  function elegirMetodo(metodo) {
+    estado.metodo = metodo;
+    document.querySelectorAll('#vn-metodo .vn-opcion').forEach((b) => b.classList.toggle('activo', b.dataset.metodo === metodo));
+    el('vn-bloque-qr').classList.toggle('vn-oculto', metodo !== 'mixto');
+    el('vn-info-mixto').classList.toggle('vn-oculto', metodo !== 'mixto');
+    el('vn-bloque-efectivo').classList.toggle('vn-oculto', metodo === 'qr');
+    el('vn-bloque-efectivo').classList.toggle('mixto', metodo === 'mixto');
+    el('vn-bloque-solo-qr').classList.toggle('vn-oculto', metodo !== 'qr');
+    ocultarAviso();
+    pintarTotales();
+    if (metodo === 'efectivo') el('vn-recibido').focus();
+    if (metodo === 'mixto') el('vn-qr').focus();
+  }
+
+  // ---------- Avisos ----------
+  function mostrarAviso(texto) {
+    el('vn-aviso').textContent = texto;
+    el('vn-aviso').classList.remove('vn-oculto');
+  }
+  function ocultarAviso() {
+    el('vn-aviso').classList.add('vn-oculto');
+  }
+
+  function mostrarResultado(datos, metodo) {
+    const caja = el('vn-resultado');
+    caja.innerHTML = '';
+    const titulo = document.createElement('strong');
+    titulo.textContent = 'Pedido #' + datos.numero_pedido + ' registrado';
+    caja.appendChild(titulo);
+
+    const detalle = document.createElement('div');
+    if (metodo === 'qr') {
+      detalle.textContent = 'Cobrado por QR: ' + dinero(datos.total) + ' Bs';
+    } else {
+      detalle.textContent = 'Cambio a entregar: ';
+      const cambio = document.createElement('span');
+      cambio.className = 'vn-resultado-cambio';
+      cambio.textContent = dinero(datos.cambio) + ' Bs';
+      detalle.appendChild(cambio);
+    }
+    caja.appendChild(detalle);
+
+    if (!datos.impreso) {
+      const alerta = document.createElement('div');
+      alerta.className = 'vn-resultado-alerta';
+      alerta.textContent = 'La venta quedó guardada, pero no se pudo imprimir. Revisa la impresora.';
+      caja.appendChild(alerta);
+    }
+    caja.classList.remove('vn-oculto');
+  }
+
+  // ---------- Cobrar ----------
+  function limpiarPedido() {
+    pedido.clear();
+    estado.tipo = null;
+    estado.mesa = null;
+    estado.conDescuento = false;
+    el('vn-nota').value = '';
+    el('vn-recibido').value = '';
+    el('vn-qr').value = '';
+    el('vn-descuento').value = '';
+    el('vn-buscar').value = '';
+    el('vn-fila-subtotal').classList.add('vn-oculto');
+    el('vn-fila-descuento').classList.add('vn-oculto');
+    el('vn-ver-descuento').textContent = 'Agregar descuento';
+    elegirTipo(null);
+    elegirMetodo('efectivo');
+    pintarProductos();
+    pintarPedido();
+    el('vn-buscar').focus();
+  }
+
+  function cobrar(tickets) {
+    if (estado.enviando) return;
+    ocultarAviso();
+
+    if (!pedido.size) {
+      mostrarAviso('Agrega al menos un producto.');
+      return;
+    }
+    if (!estado.tipo || (estado.tipo === 'mesa' && !estado.mesa)) {
+      el('vn-mesas').classList.add('vn-falta');
+      mostrarAviso('Elige el número de mesa o marca "Para llevar".');
+      return;
+    }
+    const c = calcular();
+    if (estado.metodo === 'mixto' && (c.montoQr <= 0 || c.montoQr >= c.total)) {
+      mostrarAviso('En pago mixto, el monto por QR debe ser mayor que 0 y menor que el total.');
+      el('vn-qr').focus();
+      return;
+    }
+    if (estado.metodo !== 'qr' && c.recibido < c.enEfectivo) {
+      mostrarAviso('El efectivo recibido no alcanza: faltan ' + dinero(c.enEfectivo - c.recibido) + ' Bs.');
+      el('vn-recibido').focus();
       return;
     }
 
-    if (dataVenta.status) {
-      const venta_id = parseInt(dataVenta.id_venta, 10);
-      const detallesData = productosSeleccionados.map(producto => ({
-        venta_id: venta_id,
-        menu_id: producto.menu_id,
-        cantidad: producto.cantidad,
-        subtotal: producto.subtotal
-      }));
+    const metodo = estado.metodo;
+    const envio = {
+      productos: Array.from(pedido, ([id, cantidad]) => ({ menu_id: id, cantidad: cantidad })),
+      tipo_pedido: estado.tipo,
+      mesa: estado.mesa,
+      nota: el('vn-nota').value.trim(),
+      metodo_pago: metodo,
+      efectivo_recibido: c.recibido,
+      monto_qr: c.montoQr,
+      descuento: c.descuento,
+      tickets: tickets
+    };
 
-      const responseDetalles = await fetch(base_url + '/Ventas/registrarDetalleVenta', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ venta_id: venta_id, productos: detallesData })
-      });
+    // Se bloquean los botones para que un doble clic no registre la venta dos veces
+    estado.enviando = true;
+    el('vn-cobrar-1').disabled = true;
+    el('vn-cobrar-2').disabled = true;
 
-      const responseDetallesText = await responseDetalles.text();
-      console.log("Respuesta del servidor detalles:", responseDetallesText);
-
-      let dataDetalles;
-      try {
-        dataDetalles = JSON.parse(responseDetallesText);
-      } catch (error) {
-        console.error("Error al analizar la respuesta JSON de detalles:", error);
-        return;
-      }
-
-      if (dataDetalles.status) {
-        const ticketData = {
-          venta_id: venta_id,
-          cliente_id: cliente_id ?? 0,
-          total: totalFinal,
-          fecha_emision: new Date().toISOString(),
-          emitido_por: usuario_id,
-          descuento: descuento,
-          efectivo_recibido: efectivo,
-          cambio: cambio,
-          productos: productosSeleccionados.map(producto => ({
-            nombre_menu: producto.nombre,
-            cantidad: producto.cantidad,
-            precio_menu: producto.precio,
-            subtotal: producto.subtotal
-          }))
-        };
-
-        const responseTicket = await fetch(base_url + '/Ventas/registrarTicketDoble', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(ticketData)
-        });
-
-        const responseTicketText = await responseTicket.text();
-        console.log("Respuesta del servidor ticket:", responseTicketText);
-
-        let dataTicket;
-        try {
-          dataTicket = JSON.parse(responseTicketText);
-        } catch (error) {
-          console.error("Error al analizar la respuesta JSON del ticket:", error);
-          return;
+    fetch(base_url + '/Ventas/registrarVentaCompleta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(envio)
+    })
+      .then((respuesta) => respuesta.json())
+      .then((datos) => {
+        if (datos.status) {
+          limpiarPedido();
+          mostrarResultado(datos, metodo);
+        } else if (datos.requiere_caja) {
+          window.location = base_url + '/caja?aviso=caja_cerrada';
+        } else {
+          mostrarAviso(datos.msg || 'No se pudo registrar la venta.');
         }
-
-        if (!dataTicket.status) {
-  alert("Error al generar el ticket: " + dataTicket.msg);
-} else {
-  Swal.fire('Venta registrada', 'El ticket se generó correctamente.', 'success');
-  reiniciarVenta();
-}
-      } else {
-        alert("Error al registrar los detalles de la venta: " + dataDetalles.msg);
-      }
-   } else {
-  if (dataVenta.requiere_caja) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Caja cerrada',
-      text: dataVenta.msg,
-      confirmButtonText: 'Ir a Caja'
-    }).then(() => { window.location.href = base_url + '/caja'; });
-  } else {
-    alert("Error al registrar la venta: " + dataVenta.msg);
+      })
+      .catch(() => {
+        mostrarAviso('No hubo respuesta del sistema. Antes de volver a cobrar, revisa en Tickets si la venta se registró.');
+      })
+      .finally(() => {
+        estado.enviando = false;
+        el('vn-cobrar-1').disabled = false;
+        el('vn-cobrar-2').disabled = false;
+      });
   }
-}
-  } catch (error) {
-    console.error("Error al registrar la venta:", error);
-    alert("Hubo un problema al registrar la venta.");
-  }
-}
 
-
-
-
-
-
-
-
-function agregarEventoProductos(containerId) {
-  document.getElementById(containerId).addEventListener('click', function (event) {
-    if (event.target && event.target.matches('button.btn-product')) {
-      const price = parseFloat(event.target.dataset.price);
-      const quantityInput = event.target.nextElementSibling;
-      const quantity = parseInt(quantityInput.value);
-      const name = event.target.textContent.split("-")[0].trim();
-      const menu_id = event.target.dataset.id;  // Aquí se accede correctamente a data-id
-
-      agregarProducto(name, price, quantity, menu_id);  // Se pasa el menu_id correctamente
+  function vaciar() {
+    if (!pedido.size) {
+      limpiarPedido();
+      return;
     }
+    Swal.fire({
+      title: '¿Vaciar el pedido?',
+      text: 'Se quitan todos los productos elegidos.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, vaciar',
+      cancelButtonText: 'Seguir con el pedido'
+    }).then((resultado) => {
+      if (resultado.isConfirmed) limpiarPedido();
+    });
+  }
+
+  // ---------- Eventos ----------
+  document.addEventListener('DOMContentLoaded', function () {
+    cargarCatalogo();
+
+    el('vn-buscar').addEventListener('input', pintarProductos);
+    // Enter en el buscador agrega el primer producto encontrado
+    el('vn-buscar').addEventListener('keydown', function (evento) {
+      if (evento.key !== 'Enter') return;
+      const visibles = productosVisibles();
+      if (this.value.trim() && visibles.length) {
+        cambiarCantidad(visibles[0].id, 1);
+        this.select();
+      }
+    });
+
+    el('vn-categorias').addEventListener('click', function (evento) {
+      const boton = evento.target.closest('.vn-chip');
+      if (!boton) return;
+      estado.categoria = boton.dataset.categoria;
+      el('vn-buscar').value = '';
+      pintarCategorias();
+      pintarProductos();
+    });
+
+    el('vn-grilla').addEventListener('click', function (evento) {
+      const boton = evento.target.closest('.vn-prod');
+      if (boton) cambiarCantidad(parseInt(boton.dataset.id, 10), 1);
+    });
+
+    el('vn-lineas').addEventListener('click', function (evento) {
+      const boton = evento.target.closest('[data-accion]');
+      if (!boton) return;
+      const id = parseInt(boton.closest('.vn-linea').dataset.id, 10);
+      if (boton.dataset.accion === 'mas') cambiarCantidad(id, 1);
+      if (boton.dataset.accion === 'menos') cambiarCantidad(id, -1);
+      if (boton.dataset.accion === 'quitar') cambiarCantidad(id, -(pedido.get(id) || 0));
+    });
+
+    el('vn-mesas').addEventListener('click', function (evento) {
+      const boton = evento.target.closest('.vn-mesa');
+      if (!boton) return;
+      if (boton.dataset.llevar) {
+        elegirTipo('llevar');
+      } else {
+        estado.mesa = parseInt(boton.dataset.mesa, 10);
+        elegirTipo('mesa');
+      }
+    });
+
+    el('vn-metodo').addEventListener('click', function (evento) {
+      const boton = evento.target.closest('.vn-opcion');
+      if (boton) elegirMetodo(boton.dataset.metodo);
+    });
+
+    ['vn-recibido', 'vn-qr', 'vn-descuento'].forEach(function (id) {
+      el(id).addEventListener('input', function () {
+        ocultarAviso();
+        pintarTotales();
+      });
+    });
+
+    el('vn-ver-descuento').addEventListener('click', function () {
+      estado.conDescuento = !estado.conDescuento;
+      el('vn-fila-subtotal').classList.toggle('vn-oculto', !estado.conDescuento);
+      el('vn-fila-descuento').classList.toggle('vn-oculto', !estado.conDescuento);
+      this.textContent = estado.conDescuento ? 'Quitar descuento' : 'Agregar descuento';
+      if (estado.conDescuento) {
+        el('vn-descuento').focus();
+      } else {
+        el('vn-descuento').value = '';
+      }
+      pintarTotales();
+    });
+
+    el('vn-vaciar').addEventListener('click', vaciar);
+    el('vn-cobrar-1').addEventListener('click', function () { cobrar(1); });
+    el('vn-cobrar-2').addEventListener('click', function () { cobrar(2); });
+
+    // Atajos de teclado: F2 buscar, F8 y F9 cobrar, Esc vaciar
+    document.addEventListener('keydown', function (evento) {
+      if (document.querySelector('.swal2-container')) return; // hay una ventana de confirmación abierta
+      if (evento.key === 'F2') {
+        evento.preventDefault();
+        el('vn-buscar').focus();
+        el('vn-buscar').select();
+      } else if (evento.key === 'F8') {
+        evento.preventDefault();
+        cobrar(1);
+      } else if (evento.key === 'F9') {
+        evento.preventDefault();
+        cobrar(2);
+      } else if (evento.key === 'Escape') {
+        evento.preventDefault();
+        if (el('vn-buscar').value) {
+          el('vn-buscar').value = '';
+          pintarProductos();
+        } else {
+          vaciar();
+        }
+      }
+    });
+
+    el('vn-buscar').focus();
   });
-}
-
-["menu-container", "bebida-container", "combo-container"].forEach(agregarEventoProductos);
-
-// Limpiar los campos cuando la página se recargue
-window.addEventListener("DOMContentLoaded", (event) => {
-  // Limpiar los campos
-  document.getElementById("nombre-cliente").value = "";
-  document.getElementById("numero-cliente").value = "";
-  document.getElementById("numero-mesa").value = "";
-  document.getElementById('efectivo-recibido').value = '';
-  document.getElementById('descuento').value = '0';
-});
-
-function reiniciarVenta() {
-  productos = [];
-  subtotal = 0;
-  totalFinal = 0;
-  document.getElementById('productosSeleccionados').innerHTML = '';
-  document.getElementById('subtotal').textContent = '0.00';
-  document.getElementById('total-final').textContent = '0.00';
-  document.getElementById('cambio').textContent = '0.00';
-  document.getElementById('efectivo-recibido').value = '';
-  document.getElementById('descuento').value = '0';
-  document.getElementById('nombre-cliente').value = '';
-  document.getElementById('numero-cliente').value = '';
-  document.getElementById('numero-mesa').value = '';
-}
-
+})();
