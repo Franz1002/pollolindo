@@ -340,11 +340,6 @@
       mostrarAviso('Agrega al menos un producto.');
       return;
     }
-    if (!estado.tipo || (estado.tipo === 'mesa' && !estado.mesa)) {
-      el('vn-mesas').classList.add('vn-falta');
-      mostrarAviso('Elige el número de mesa o marca "Para llevar".');
-      return;
-    }
     const c = calcular();
     if (estado.metodo === 'mixto' && (c.montoQr <= 0 || c.montoQr >= c.total)) {
       mostrarAviso('En pago mixto, el monto por QR debe ser mayor que 0 y menor que el total.');
@@ -459,7 +454,11 @@
     el('vn-mesas').addEventListener('click', function (evento) {
       const boton = evento.target.closest('.vn-mesa');
       if (!boton) return;
-      if (boton.dataset.llevar) {
+      // Mesa y "Para llevar" son opcionales: un segundo clic en el botón marcado lo desmarca
+      if (boton.classList.contains('activo')) {
+        estado.mesa = null;
+        elegirTipo(null);
+      } else if (boton.dataset.llevar) {
         elegirTipo('llevar');
       } else {
         estado.mesa = parseInt(boton.dataset.mesa, 10);

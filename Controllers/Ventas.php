@@ -107,13 +107,16 @@ class Ventas extends Controllers
 			$this->responderVenta(false, 'El total de la venta no puede ser 0.');
 		}
 
-		// Tipo de pedido
-		$tipoPedido = ($data['tipo_pedido'] ?? '') === 'llevar' ? 'llevar' : 'mesa';
+		// Tipo de pedido: es opcional. Si no se indica, la venta queda sin mesa ni "para llevar"
+		$tipoPedido = null;
 		$mesa = null;
-		if ($tipoPedido === 'mesa') {
+		if (($data['tipo_pedido'] ?? '') === 'llevar') {
+			$tipoPedido = 'llevar';
+		} elseif (($data['tipo_pedido'] ?? '') === 'mesa') {
+			$tipoPedido = 'mesa';
 			$mesa = (int) ($data['mesa'] ?? 0);
 			if ($mesa < 1 || $mesa > $this->model->numeroMesas()) {
-				$this->responderVenta(false, 'Elige la mesa o marca el pedido como "Para llevar".');
+				$this->responderVenta(false, 'Ese número de mesa no existe.');
 			}
 		}
 		$nota = mb_substr(trim((string) ($data['nota'] ?? '')), 0, 120);
@@ -268,7 +271,7 @@ class Ventas extends Controllers
 		return false;
 	}
 
-	// Primera línea de la comanda: mesa, para llevar o, en ventas antiguas, el nombre anotado
+	// Primera línea de la comanda: mesa o para llevar. Vacío si el pedido no lo indica
 	private function destinoPedido(array $ticket)
 	{
 		if ($ticket['tipo_pedido'] === 'llevar') {
@@ -277,7 +280,8 @@ class Ventas extends Controllers
 		if ($ticket['tipo_pedido'] === 'mesa' && !empty($ticket['mesa'])) {
 			return 'MESA ' . $ticket['mesa'];
 		}
-		return 'PARA: ' . ($ticket['nombre_cliente'] ?? 'MESA');
+		// Ventas antiguas: se anotaba un nombre en lugar de la mesa
+		return !empty($ticket['nombre_cliente']) ? 'PARA: ' . $ticket['nombre_cliente'] : '';
 	}
 
 	// Comanda de cocina. Devuelve true si se pudo imprimir
@@ -296,7 +300,10 @@ class Ventas extends Controllers
 
 				$escpos->setJustification(Printer::JUSTIFY_CENTER); //Centrar el texto
 				$escpos->setEmphasis(true);
-				$escpos->text($this->destinoPedido($ticket_details[0]) . "\n");
+				$destino = $this->destinoPedido($ticket_details[0]);
+				if ($destino !== '') {
+					$escpos->text($destino . "\n");
+				}
 				if (!empty($ticket_details[0]['nota_pedido'])) {
 					$escpos->text("NOTA: " . $ticket_details[0]['nota_pedido'] . "\n");
 				}
