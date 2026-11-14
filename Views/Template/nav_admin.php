@@ -65,8 +65,8 @@ if ($esAdminMenu) {
 </li>
 
 <script>
-  // Marca solo la opción de la pantalla actual. La plantilla compara por "contiene",
-  // y por eso en Vender (/ventas) también marcaba Reportes (/reportes/rventas)
+  // Marca la opción de la pantalla actual comparando la ruta completa,
+  // para que Vender (/ventas) no marque también Reportes (/reportes/rventas)
   window.addEventListener("load", function () {
     var limpiar = function (ruta) { return ruta.replace(/\/+$/, "").toLowerCase(); };
     var actual = limpiar(window.location.pathname);

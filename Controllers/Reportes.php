@@ -24,7 +24,6 @@ class Reportes extends Controllers
     public function rventas()
     {
         $data['title'] = "Reporte venta";
-        $data['page_functions_js'] = "functions_reporte_venta.js";
         $this->views->getView($this, "rventas", $data);
     }
 

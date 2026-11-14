@@ -220,7 +220,6 @@ getModal('modalUsuarios', $data); ?>
         <a class="dcl-acceso primario" href="<?= base_url(); ?>/ventas">Nueva venta</a>
         <a class="dcl-acceso secundario" href="<?= base_url(); ?>/inventario">Ver inventario</a>
         <a class="dcl-acceso secundario" href="<?= base_url(); ?>/reportes/rventas">Reporte de ventas</a>
-        <button class="dcl-acceso secundario" onclick="imprimir()">Probar impresora</button>
       </div>
     </div>
 

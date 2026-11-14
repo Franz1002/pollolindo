@@ -31,4 +31,6 @@
 <script src="<?= base_url_template(); ?>/assets/js/todolist.js"></script>
 
 <!-- Funciones JS de la página -->
+<?php if (!empty($data['page_functions_js'])) { ?>
 <script src="<?= media(); ?>/js/<?= $data['page_functions_js']; ?>"></script>
+<?php } ?>

@@ -15,7 +15,7 @@
 
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>/Assets/css/tokens.css">
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>/Assets/css/login.css">
-  <link rel="icon" href="<?php echo BASE_URL; ?>/Assets/images/favicon.png" type="image/x-icon">
+  <link rel="icon" href="<?php echo BASE_URL; ?>/template/assets/images/favicon.png" type="image/png">
 
   <title>Iniciar sesión · Chicken Lindo</title>
 </head>

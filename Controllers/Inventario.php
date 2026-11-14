@@ -15,7 +15,6 @@ class Inventario extends Controllers
     {
         $this->esAdmin();
         $data['title'] = "Inventario";
-        $data['page_functions_js'] = "functions_inventario.js";
         $this->views->getView($this, "inventario", $data);
     }
 

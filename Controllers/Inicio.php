@@ -18,7 +18,6 @@ class Inicio extends Controllers
         }
 
         $data['title'] = "Inicio";
-        $data['page_functions_js'] = "functions_inicio.js";
 
         // --- Ventas: se agrega por día lo que el modelo ya entrega por día+usuario ---
         $ventasCrudas = $this->model->selectVentaDiarioGrafico();
