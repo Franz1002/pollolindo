@@ -397,3 +397,15 @@ select.form-control option, .form-select option{ background:var(--carbon-alto); 
 
 /* Campos de fecha: el calendario del navegador en versión oscura */
 input[type="date"].form-control{ color-scheme:dark; }
+
+/* Ventas anuladas en la lista de tickets: tachadas y apagadas, con el motivo legible */
+.table tbody tr.fila-anulada td{ color:var(--hueso-opaco) !important; }
+.table tbody tr.fila-anulada td:not(.sin-tachar){ text-decoration:line-through; }
+.table tbody tr.fila-anulada td.sin-tachar small{ color:var(--hueso-tenue); }
+.table td.sin-tachar{ min-width:120px; }
+
+/* Tablas con textos largos (productos, motivos): el texto baja de línea en vez de
+   ensanchar la tabla, así entra en la pantalla sin desplazarse hacia los lados */
+.table.tabla-fluida td{ white-space:normal; }
+.table.tabla-fluida th,
+.table.tabla-fluida td.sin-corte{ white-space:nowrap; }

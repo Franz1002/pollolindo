@@ -6,6 +6,8 @@ class InicioModel extends Mysql
         parent::__construct();
     }
 
+    // Ventas del mes por día y usuario. No cuenta las anuladas.
+    // "venta.estado" lleva el nombre de la tabla porque usuario también tiene una columna estado.
     public function selectVentaDiarioGrafico()
     {
         $sql = "SELECT
@@ -19,6 +21,7 @@ class InicioModel extends Mysql
         usuario ON venta.usuario_id = usuario.id
     WHERE
         MONTH(fecha_venta) = MONTH(CURRENT_DATE())
+        AND venta.estado = 'vigente'
     GROUP BY
         FECHA, DIA, usuario.nombre
     ORDER BY

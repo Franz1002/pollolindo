@@ -20,19 +20,23 @@
           <span class="ml-auto" id="tk-resumen" style="font-family: var(--font-mono); color: var(--hueso);"></span>
         </div>
         <div class="text-danger mb-2" id="tk-aviso" role="alert"></div>
+        <p class="text-muted mb-2" style="font-size: 0.85rem;">
+          Solo se puede anular una venta mientras la caja en la que se cobró siga abierta.
+          Las anuladas se muestran tachadas y no suman en el total.
+        </p>
 
         <div class="table-responsive">
-          <table id="tableTickets" class="table table-hover" style="width: 100%;">
+          <table id="tableTickets" class="table table-hover tabla-fluida" style="width: 100%;">
             <thead>
               <tr>
                 <th>Pedido</th>
-                <th>Fecha y hora</th>
+                <th>Fecha</th>
                 <th>Productos</th>
                 <th>Destino</th>
                 <th>Pago</th>
-                <th>Descuento</th>
-                <th>Total (Bs)</th>
-                <th>Cobrado por</th>
+                <th>Total</th>
+                <th>Cajero</th>
+                <th>Estado</th>
               </tr>
             </thead>
             <tbody></tbody>

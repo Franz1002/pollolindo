@@ -36,7 +36,8 @@ class CajaModel extends Mysql
                 COALESCE(SUM(CASE WHEN t.descuento > 0 THEN 1 ELSE 0 END), 0) AS num_descuentos
             FROM ticket t
             INNER JOIN venta v ON v.id_venta = t.venta_id
-            WHERE v.fecha_venta BETWEEN ? AND ?";
+            WHERE v.fecha_venta BETWEEN ? AND ?
+              AND v.estado = 'vigente'"; // las ventas anuladas no cuentan: su dinero se devolvió
         $resultado = $this->select1($sql, [$fechaInicio, $fechaFin]);
         return $resultado ? $resultado[0] : ['cantidad_tickets' => 0, 'total_ventas' => 0, 'total_efectivo' => 0, 'total_qr' => 0, 'num_descuentos' => 0];
     }
